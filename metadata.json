@@ -1,0 +1,6 @@
+{
+  "name": "QuranRise",
+  "description": "A professional, high-converting online Quran academy website offering Tajweed, Qaida, Reading, and Memorization with live one-on-one certified tutors.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
