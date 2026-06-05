@@ -69,7 +69,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
   return (
     <section 
       id="home" 
-      className="relative h-screen min-h-screen flex items-center bg-[#05110E] overflow-hidden"
+      className="relative min-h-screen lg:h-screen lg:min-h-[820px] flex items-center bg-[#05110E] overflow-hidden"
     >
       {/* Background Graphic and Ambient Spotlights */}
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -86,7 +86,9 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
             <source src="https://videos.pexels.com/video-files/9117001/9117001-sd_960_506_24fps.mp4" type="video/mp4" />
             <source src="https://videos.pexels.com/video-files/9117001/9117001-uhd_1440_2560_24fps.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#05110E]/95 via-[#040E0B]/85 to-[#05110E]"></div>
+          {/* Left-to-right overlay for text legibility, top-to-bottom for subtle integration */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#05110E]/95 via-[#05110E]/70 to-[#05110E]/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#05110E] via-[#040E0B]/20 to-[#05110E]/60"></div>
         </div>
 
         <img
@@ -102,7 +104,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#C8A24A]/4 rounded-full blur-[130px] pointer-events-none"></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-24 xs:mt-28 sm:mt-32 lg:mt-0">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-28 xs:pt-32 sm:pt-36 lg:pt-28 pb-8">
         
         {/* Mobile stacking layout order matched perfectly:
             1. Headline, 2. Description, 3. CTA, 4. Video Showcase, 5. Badges/indicators */}
@@ -112,7 +114,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 lg:space-y-8 text-left order-1 lg:order-none">
             
             {/* Apple/Stripe-level Heading style */}
-            <h1 className="font-display font-[900] text-[20px] xs:text-[23px] sm:text-[36px] md:text-[44px] lg:text-[54px] xl:text-[62px] text-white tracking-[-0.035em] leading-[1.12] sm:leading-[1.1] filter drop-shadow-sm max-w-[85vw] sm:max-w-xl">
+            <h1 className="font-display font-[900] text-[20px] xs:text-[23px] sm:text-[36px] md:text-[44px] lg:text-[54px] xl:text-[62px] text-white tracking-[-0.035em] leading-[1.12] sm:leading-[1.1] filter drop-shadow-sm max-w-[65vw] sm:max-w-xl">
               Learn Quran <br />
               Online With <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C8A24A] via-[#D8BB72] to-[#FFF1D0] relative block sm:inline mt-1 sm:mt-0">
@@ -121,50 +123,51 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
             </h1>
 
             {/* Premium subtitle in Inter 500 */}
-            <p className="font-sans font-medium text-xs sm:text-base md:text-lg lg:text-[19px] text-[#A6C0B5] max-w-[85vw] sm:max-w-2xl leading-relaxed">
+            <p className="font-sans font-medium text-xs sm:text-base md:text-lg lg:text-[19px] text-[#A6C0B5] max-w-[65vw] sm:max-w-2xl leading-relaxed">
               Connect live with highly learned, certified native Arab tutors. Experience personalized, safe, 1-on-1 sessions designed with expert care for kids and adults.
             </p>
 
-            {/* CTA Buttons stack */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 pt-1 sm:pt-2 max-w-[85vw] sm:max-w-none">
+            {/* Combined 4-Button / Badges Grid for spacing efficiency */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-[65vw] sm:max-w-xl xl:max-w-2xl pt-2 pb-4">
+              {/* Button 1: Book 3-Day Free Trial */}
               <button
                 onClick={onOpenTrialModal}
-                className="h-12 sm:h-14 px-5 sm:px-8 rounded-xl bg-gradient-to-r from-[#C8A24A] to-[#D8BB72] hover:from-[#D1AC52] hover:to-[#EAD08D] text-[#0A1A14] font-display font-black text-[11px] sm:text-xs uppercase tracking-widest shadow-[0_12px_36px_rgba(200,162,74,0.3)] transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-2.5 cursor-pointer border border-[#EEDFBC]/20"
+                className="h-12 sm:h-14 w-full px-4 sm:px-6 rounded-xl bg-gradient-to-r from-[#C8A24A] to-[#D8BB72] hover:from-[#D1AC52] hover:to-[#EAD08D] text-[#0A1A14] font-display font-black text-[11px] sm:text-xs uppercase tracking-widest shadow-[0_12px_24px_rgba(200,162,74,0.2)] transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-2 cursor-pointer border border-[#EEDFBC]/20 shrink-0"
               >
-                <span>Book 3-Day Free Trial</span>
+                <span>Book Free Trial</span>
                 <ArrowRight size={13} className="stroke-[2.5]" />
               </button>
               
+              {/* Button 2: Chat on WhatsApp */}
               <a
                 href="https://wa.me/13156364022"
                 target="_blank"
                 rel="noreferrer"
-                className="h-12 sm:h-14 px-5 sm:px-8 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#C8A24A]/30 text-[#E2C785] font-display font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center space-x-2"
+                className="h-12 sm:h-14 w-full px-4 sm:px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#C8A24A]/30 text-[#E2C785] font-display font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center space-x-2 shrink-0 cursor-pointer"
               >
                 <MessageCircle size={15} className="text-[#51DE78] fill-[#51DE78]/10" />
                 <span>Chat on WhatsApp</span>
               </a>
-            </div>
 
-            {/* Quality badge descriptors */}
-            <div className="hidden sm:grid grid-cols-2 gap-4 max-w-md pt-4 text-left">
-              <div className="flex items-center space-x-3 bg-white/[0.02] border border-white/5 p-3.5 rounded-2xl">
-                <div className="w-9 h-9 rounded-xl bg-[#C8A24A]/10 flex items-center justify-center text-[#D8BB72] shrink-0">
-                  <Award size={18} />
+              {/* Button 3: Certified Ijazah */}
+              <div className="flex items-center space-x-3 bg-white/[0.03] border border-white/5 hover:border-[#C8A24A]/25 hover:bg-white/[0.05] p-3 rounded-xl transition-all duration-300">
+                <div className="w-8 h-8 rounded-lg bg-[#C8A24A]/10 flex items-center justify-center text-[#D8BB72] shrink-0">
+                  <Award size={16} />
                 </div>
-                <div>
-                  <span className="block text-white font-black text-xs">Certified Ijazah</span>
-                  <span className="text-[10px] text-[#89A296] font-medium">Verified native tutors</span>
+                <div className="text-left">
+                  <span className="block text-white font-black text-[11px] sm:text-xs">Certified Ijazah</span>
+                  <span className="text-[9px] sm:text-[10px] text-[#89A296] font-medium leading-none">Verified native tutors</span>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3 bg-white/[0.02] border border-white/5 p-3.5 rounded-2xl">
-                <div className="w-9 h-9 rounded-xl bg-[#C8A24A]/10 flex items-center justify-center text-[#D8BB72] shrink-0">
-                  <Laptop size={18} />
+              {/* Button 4: Flexible 24/7 Hours */}
+              <div className="flex items-center space-x-3 bg-white/[0.03] border border-white/5 hover:border-[#C8A24A]/25 hover:bg-white/[0.05] p-3 rounded-xl transition-all duration-300">
+                <div className="w-8 h-8 rounded-lg bg-[#C8A24A]/10 flex items-center justify-center text-[#D8BB72] shrink-0">
+                  <Laptop size={16} />
                 </div>
-                <div>
-                  <span className="block text-white font-black text-xs">Flexible 24/7 Hours</span>
-                  <span className="text-[10px] text-[#89A296] font-medium">To fit your timeline</span>
+                <div className="text-left">
+                  <span className="block text-white font-black text-[11px] sm:text-xs">Flexible 24/7 Hours</span>
+                  <span className="text-[9px] sm:text-[10px] text-[#89A296] font-medium leading-none">To fit your timeline</span>
                 </div>
               </div>
             </div>
