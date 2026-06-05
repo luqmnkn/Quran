@@ -150,7 +150,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
               </a>
 
               {/* Button 3: Certified Ijazah */}
-              <div className="flex items-center space-x-3 bg-white/[0.03] border border-white/5 hover:border-[#C8A24A]/25 hover:bg-white/[0.05] p-3 rounded-xl transition-all duration-300">
+              <div className="hidden sm:flex items-center space-x-3 bg-white/[0.03] border border-white/5 hover:border-[#C8A24A]/25 hover:bg-white/[0.05] p-3 rounded-xl transition-all duration-300">
                 <div className="w-8 h-8 rounded-lg bg-[#C8A24A]/10 flex items-center justify-center text-[#D8BB72] shrink-0">
                   <Award size={16} />
                 </div>
@@ -161,7 +161,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
               </div>
 
               {/* Button 4: Flexible 24/7 Hours */}
-              <div className="flex items-center space-x-3 bg-white/[0.03] border border-white/5 hover:border-[#C8A24A]/25 hover:bg-white/[0.05] p-3 rounded-xl transition-all duration-300">
+              <div className="hidden sm:flex items-center space-x-3 bg-white/[0.03] border border-white/5 hover:border-[#C8A24A]/25 hover:bg-white/[0.05] p-3 rounded-xl transition-all duration-300">
                 <div className="w-8 h-8 rounded-lg bg-[#C8A24A]/10 flex items-center justify-center text-[#D8BB72] shrink-0">
                   <Laptop size={16} />
                 </div>
