@@ -40,10 +40,10 @@ export default function Header({ onOpenTrialModal }: HeaderProps) {
   return (
     <div className="fixed top-4 left-0 right-0 z-40 flex justify-center px-4">
       <div
-        className={`flex items-center gap-5 sm:gap-8 glassmorphic-nav rounded-full px-5 sm:px-6 shadow-2xl transition-all duration-300 border border-white/[0.08] backdrop-blur-xl ${
+        className={`flex items-center gap-5 sm:gap-8 glassmorphic-nav rounded-full px-5 sm:px-6 shadow-[0_8px_32px_rgba(10,26,20,0.06)] transition-all duration-300 border backdrop-blur-xl ${
           isScrolled
-            ? 'bg-[#05110E]/95 shadow-[0_12px_40px_rgba(0,0,0,0.5)] h-14 md:h-16 border-white/15'
-            : 'bg-[#05110E]/60 h-14 md:h-16'
+            ? 'bg-white/95 border-[#C8A24A]/25 shadow-[0_12px_40px_rgba(10,26,20,0.12)] h-14 md:h-16'
+            : 'bg-white/80 border-[#ECECE6] h-14 md:h-16'
         }`}
         style={{
           maxWidth: 'fit-content',
@@ -56,7 +56,7 @@ export default function Header({ onOpenTrialModal }: HeaderProps) {
           onClick={(e) => handleLinkClick(e, '#home')}
           className="flex items-center shrink-0"
         >
-          <Logo isDarkBg={true} className="h-6 sm:h-7" />
+          <Logo isDarkBg={false} className="h-6 sm:h-7" />
         </a>
 
         {/* Minimal Links on the right of the logo */}
@@ -66,7 +66,7 @@ export default function Header({ onOpenTrialModal }: HeaderProps) {
               key={link.name}
               href={link.href}
               onClick={(e) => handleLinkClick(e, link.href)}
-              className="font-display font-black text-[10px] sm:text-xs uppercase tracking-widest text-[#89A296] hover:text-[#C8A24A] transition-colors duration-200"
+              className="font-display font-black text-[10px] sm:text-xs uppercase tracking-widest text-[#4E625A] hover:text-[#C8A24A] transition-colors duration-200"
             >
               {link.name}
             </a>

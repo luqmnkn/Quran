@@ -122,12 +122,6 @@ export default function About({ onOpenTrialModal }: AboutProps) {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="lg:col-span-7 space-y-8"
           >
-            <div className="inline-flex items-center space-x-2 bg-[#F5EDD6] border border-[#C8A24A]/30 px-4 py-2 rounded-full shadow-sm">
-              <BookOpen className="text-[#8A6B20] w-4.5 h-4.5" />
-              <span className="text-xs font-bold text-[#8A6B20] uppercase tracking-widest font-mono">
-                Our Academy Vision
-              </span>
-            </div>
 
             <h2 className="font-display font-[900] text-2xl sm:text-3xl lg:text-[38px] xl:text-[42px] text-[#0A1A14] tracking-[-0.040em] leading-[1.1] filter drop-shadow-sm">
               A Kind, Compassionate Pathway toward <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A6B20] via-[#C8A24A] to-[#D8BB72]">Noble Quran Tajweed</span>

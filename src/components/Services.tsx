@@ -102,12 +102,6 @@ export default function Services({ onSelectCourse, onOpenTrialModal }: ServicesP
         
         {/* Section Header with Elite Spacing & Typography */}
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-6">
-          <div className="inline-flex items-center space-x-2 bg-[#F5EDD6] border border-[#C8A24A]/30 px-4 py-2 rounded-full shadow-sm">
-            <GraduationCap className="text-[#8A6B20] w-4.5 h-4.5" />
-            <span className="text-xs font-bold text-[#8A6B20] uppercase tracking-widest font-mono">
-              Elite Guided Curriculum
-            </span>
-          </div>
           
           <h2 className="font-display font-[900] text-3xl sm:text-[45px] lg:text-[64px] text-[#0A1A14] tracking-[-0.04em] leading-[1.05] filter drop-shadow-sm">
             Our Elite Online <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A6B20] via-[#C8A24A] to-[#B3923B]">Quran Academy</span> Programs

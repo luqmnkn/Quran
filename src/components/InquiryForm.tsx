@@ -431,7 +431,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
           </div>
 
           {/* Right Column: Inquiry Submission Form */}
-          <div className="lg:col-span-7 bg-white rounded-[32px] border border-[#ECECE6] p-8 sm:p-10 shadow-xl flex flex-col justify-between">
+          <div className="lg:col-span-7 bg-white rounded-[1.75rem] sm:rounded-[32px] border border-[#ECECE6] p-4 xs:p-6 sm:p-10 shadow-xl flex flex-col justify-between">
             
             <AnimatePresence mode="wait">
               {status === 'success' ? (
@@ -608,7 +608,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                   <button
                     type="submit"
                     disabled={status === 'submitting'}
-                    className="w-full h-15 bg-gradient-to-r from-[#C8A24A] to-[#D8BB72] hover:scale-[1.01] text-[#0A1A14] font-display font-extrabold rounded-2xl uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center space-x-2.5 cursor-pointer shadow-lg shadow-amber-500/10"
+                    className="w-full h-13 sm:h-15 bg-gradient-to-r from-[#C8A24A] to-[#D8BB72] hover:scale-[1.01] text-[#0A1A14] font-display font-extrabold rounded-xl sm:rounded-2xl uppercase tracking-wider sm:tracking-widest text-[10px] sm:text-xs px-2.5 sm:px-6 transition-all duration-300 flex items-center justify-center space-x-2 cursor-pointer shadow-lg shadow-amber-500/10"
                   >
                     {status === 'submitting' ? (
                       <>
@@ -632,98 +632,6 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
 
           </div>
 
-        </div>
-
-        {/* Dynamic Verification Utility block (extremely neat client-side proof-of-concept simulation tool) */}
-        <div className="mt-20 pt-8 border-t border-[#ECECE6] max-w-6xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-[#F6F7F3] border border-[#ECECE6]">
-            <div className="flex items-center space-x-3 text-xs text-gray-600 text-left">
-              <span className="flex h-2.5 w-2.5 relative shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-700 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span>
-              </span>
-              <div>
-                <strong>Simulation Sandbox:</strong> Submitted leads are persisted securely inside the browser's <code>localStorage</code> sandbox environment for convenient preview mapping.
-              </div>
-            </div>
-            
-            <button
-              onClick={() => setShowLeadViewer(!showLeadViewer)}
-              className="text-xs bg-white hover:bg-[#FAFAF8] border border-[#ECECE6] font-extrabold px-5 py-2.5 rounded-xl transition-all cursor-pointer shadow-sm text-gray-700"
-            >
-              {showLeadViewer ? 'Hide Sandbox Viewer' : `Show Sandbox Viewer (${storedLeads.length})`}
-            </button>
-          </div>
-
-          <AnimatePresence>
-            {showLeadViewer && (
-              <motion.div 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 15 }}
-                className="mt-6 bg-white border border-[#ECECE6] rounded-3xl p-6 sm:p-8 text-left space-y-5 shadow-inner max-h-96 overflow-y-auto"
-              >
-                <div className="flex items-center justify-between border-b border-[#F2F2EC] pb-4">
-                  <div className="flex items-center space-x-2.5">
-                    <BookOpen size={18} className="text-[#8A6B20]" />
-                    <h4 className="font-display font-[800] text-sm text-[#0A1A14]">
-                      Simulated Lead Registry Console (Web Local DB)
-                    </h4>
-                  </div>
-                  {storedLeads.length > 0 && (
-                    <button
-                      onClick={handleClearAllLeads}
-                      className="text-xs text-red-500 font-bold flex items-center space-x-1.5 hover:underline cursor-pointer"
-                    >
-                      <Trash2 size={13} />
-                      <span>Purge Database</span>
-                    </button>
-                  )}
-                </div>
-
-                {storedLeads.length === 0 ? (
-                  <div className="text-center py-12 text-xs text-gray-400 font-bold font-mono">
-                    -- NO LEAD ENTRIES SUBMITTED TO THIS LOCAL PREVIEW DEV CONTAINER YET --
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {storedLeads.map((lead) => (
-                      <div key={lead.id} className="p-5 bg-[#FAFAF8] rounded-2xl border border-[#ECECE6] text-xs relative flex flex-col justify-between">
-                        <button
-                          onClick={() => handleDeleteLead(lead.id)}
-                          className="absolute top-5 right-5 text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
-                          title="Delete inquiry record"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                          <div className="space-y-1">
-                            <span className="text-gray-400 block font-bold text-[9px] uppercase font-mono">Inquirer Details</span>
-                            <strong className="text-[#0A1A14] block text-sm">{lead.fullName}</strong>
-                            <span className="text-gray-500 block">{lead.email}</span>
-                            <span className="text-gray-500 block">{lead.phone}</span>
-                          </div>
-                          
-                          <div className="space-y-1">
-                            <span className="text-gray-400 block font-bold text-[9px] uppercase font-mono">Curriculum Focus</span>
-                            <span className="text-[#8A6B20] font-extrabold block text-sm uppercase">{lead.courseInterest.replace('-', ' ')}</span>
-                            <span className="text-gray-500 block">Location: {lead.country}</span>
-                            <span className="text-gray-400 block font-mono text-[9px]">{new Date(lead.submittedAt).toLocaleString()}</span>
-                          </div>
-
-                          <div className="sm:col-span-2 lg:col-span-1 border-t sm:border-t-0 sm:pt-0 pt-3 text-gray-600 bg-white p-3.5 rounded-xl border border-[#ECECE6] shadow-sm">
-                            <span className="text-gray-400 block font-bold text-[9px] uppercase font-mono mb-1">Coordinating Note</span>
-                            <p className="italic leading-relaxed text-[11px] font-medium text-gray-800">"{lead.message}"</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
       </div>

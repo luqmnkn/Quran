@@ -29,6 +29,24 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
   const [activeTab, setActiveTab] = useState<'video' | 'inquiry'>('video');
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Rotating text values representing the requested courses
+  const rotatingWords = [
+    'Tajweed',
+    'Memorization',
+    'Recitation',
+    'Daily Duas',
+    'Adhan',
+    'Basics of Deen'
+  ];
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, []);
+
   // Responsive switch observer
   useEffect(() => {
     const handleResize = () => {
@@ -113,22 +131,33 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
           {/* LEFT SIDE: Heading, Value Proposition & CTAs */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 lg:space-y-8 text-left order-1 lg:order-none">
             
-            {/* Apple/Stripe-level Heading style */}
-            <h1 className="font-display font-[900] text-[20px] xs:text-[23px] sm:text-[36px] md:text-[44px] lg:text-[54px] xl:text-[62px] text-white tracking-[-0.035em] leading-[1.12] sm:leading-[1.1] filter drop-shadow-sm max-w-[65vw] sm:max-w-xl">
-              Learn Quran <br />
-              Online With <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C8A24A] via-[#D8BB72] to-[#FFF1D0] relative block sm:inline mt-1 sm:mt-0">
-                Absolute Confidence
+            {/* Apple/Stripe-level Heading style with react-bits rotating text replica */}
+            <h1 className="font-display font-[900] text-[22px] xs:text-[26px] sm:text-[34px] md:text-[44px] lg:text-[48px] xl:text-[54px] text-white tracking-[-0.035em] leading-[1.12] sm:leading-[1.1] filter drop-shadow-sm max-w-full sm:max-w-xl min-h-[4.5em] xs:min-h-[4.2em] sm:min-h-[3.8em] md:min-h-[3.5em]">
+              Learn Quran Online<br />
+              <span className="text-[#89A296] block sm:inline">with QuranRise and Master</span>
+              <span className="inline-block relative overflow-hidden align-bottom min-w-[150px] xs:min-w-[180px] sm:min-w-[200px] ml-1">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={currentWordIndex}
+                    initial={{ y: '100%', opacity: 0 }}
+                    animate={{ y: '0%', opacity: 1 }}
+                    exit={{ y: '-100%', opacity: 0 }}
+                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-[#C8A24A] via-[#D8BB72] to-[#FFF1D0] inline-block whitespace-nowrap"
+                  >
+                    → {rotatingWords[currentWordIndex]}
+                  </motion.span>
+                </AnimatePresence>
               </span>
             </h1>
 
             {/* Premium subtitle in Inter 500 */}
-            <p className="font-sans font-medium text-xs sm:text-base md:text-lg lg:text-[19px] text-[#A6C0B5] max-w-[65vw] sm:max-w-2xl leading-relaxed">
+            <p className="font-sans font-medium text-xs sm:text-base md:text-lg lg:text-[19px] text-[#A6C0B5] max-w-full sm:max-w-2xl leading-relaxed">
               Connect live with highly learned, certified native Arab tutors. Experience personalized, safe, 1-on-1 sessions designed with expert care for kids and adults.
             </p>
 
             {/* Combined 4-Button / Badges Grid for spacing efficiency */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-[65vw] sm:max-w-xl xl:max-w-2xl pt-2 pb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-full sm:max-w-xl xl:max-w-2xl pt-2 pb-4">
               {/* Button 1: Book 3-Day Free Trial */}
               <button
                 onClick={onOpenTrialModal}

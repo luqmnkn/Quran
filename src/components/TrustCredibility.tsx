@@ -29,8 +29,8 @@ export default function TrustCredibility() {
           </p>
         </div>
 
-        {/* Custom Bento stats grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+        {/* Custom Bento stats grid - highly optimized to take less space on mobile */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 max-w-5xl mx-auto">
           {TRUST_STATS.map((stat, idx) => (
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -38,17 +38,17 @@ export default function TrustCredibility() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               key={idx}
-              className="bg-white/[0.02] border border-white/5 hover:border-[#C8A24A]/30 rounded-[28px] p-6 sm:p-8 flex flex-col items-center justify-between text-center backdrop-blur-md group hover:bg-white/[0.04] transition-all duration-300 shadow-xl"
+              className="bg-white/[0.02] border border-white/5 hover:border-[#C8A24A]/30 rounded-2xl sm:rounded-[28px] p-3 xs:p-4 sm:p-8 flex flex-col items-center justify-between text-center backdrop-blur-md group hover:bg-white/[0.04] transition-all duration-300 shadow-xl"
             >
-              <div className="space-y-3">
-                <span className="font-display font-[900] text-3.5xl sm:text-5xl text-transparent bg-clip-text bg-gradient-to-br from-[#D8BB72] to-[#8A6B20] block tracking-tighter">
+              <div className="space-y-1.5 sm:space-y-3">
+                <span className="font-display font-[900] text-xl xs:text-2xl sm:text-4xl lg:text-5xl text-transparent bg-clip-text bg-gradient-to-br from-[#D8BB72] to-[#8A6B20] block tracking-tighter">
                   {stat.value}
                 </span>
-                <h4 className="font-display font-extrabold text-sm text-white tracking-tight leading-snug">
+                <h4 className="font-display font-extrabold text-[10px] xs:text-xs sm:text-sm text-white tracking-tight leading-snug">
                   {stat.label}
                 </h4>
               </div>
-              <p className="text-xs text-[#89A296] leading-relaxed mt-4 pt-4 border-t border-white/5 w-full">
+              <p className="text-[9px] xs:text-[11px] sm:text-xs text-[#89A296] leading-normal xs:leading-relaxed mt-2.5 pt-2.5 sm:mt-4 sm:pt-4 border-t border-white/5 w-full">
                 {stat.description}
               </p>
             </motion.div>
