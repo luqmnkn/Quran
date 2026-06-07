@@ -75,7 +75,9 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
     setErrorMsg('');
 
     try {
-      const response = await fetch('/api/send-email', {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const endpoint = apiUrl ? `${apiUrl}/send-email` : '/api/send-email';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -80,7 +80,9 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
 
     try {
       // POST the lead data to our centralized backend email service
-      const response = await fetch('/api/send-email', {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const endpoint = apiUrl ? `${apiUrl}/send-email` : '/api/send-email';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
