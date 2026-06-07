@@ -17,6 +17,8 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
   const [country, setCountry] = useState('United States');
   const [courseInterest, setCourseInterest] = useState('noorani-qaida');
   const [message, setMessage] = useState('');
+  const [website, setWebsite] = useState('');
+  const [botField, setBotField] = useState('');
   
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -65,14 +67,43 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setStatus('submitting');
+    if (errors.submit) {
+      const updatedErrors = { ...errors };
+      delete updatedErrors.submit;
+      setErrors(updatedErrors);
+    }
 
-    // Simulate Network delay for ultra professional conversion experience
-    setTimeout(() => {
+    try {
+      // POST the lead data to our centralized backend email service
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName,
+          email,
+          phone,
+          country,
+          courseInterest,
+          message,
+          website,
+          botField,
+        }),
+      });
+
+      const resData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(resData.message || 'Error occurred during form processing');
+      }
+
+      // Record for sandbox simulation log
       const newLead: InquirySubmission = {
         id: 'lead_' + Math.random().toString(36).substr(2, 9),
         fullName,
@@ -90,7 +121,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
       if (existingLeads) {
         try {
           leadsArray = JSON.parse(existingLeads);
-        } catch (e) {
+        } catch (err) {
           leadsArray = [];
         }
       }
@@ -103,18 +134,27 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
       setEmail('');
       setPhone('');
       setMessage('');
+      setWebsite('');
+      setBotField('');
       onClearPrefill();
       
       if (onSubmitSuccess) {
         onSubmitSuccess();
       }
 
-      // Hide success tag after 6 seconds
+      // Keep success state for 12 seconds so users can read the detailed prompt, then return to idle
       setTimeout(() => {
          setStatus('idle');
-      }, 8000);
+      }, 12000);
 
-    }, 1200);
+    } catch (err: any) {
+      console.error("Submission failed:", err);
+      setStatus('error');
+      setErrors(prev => ({
+        ...prev,
+        submit: err.message || 'A transmission error occurred. Please verify your internet connection or reach us on WhatsApp.'
+      }));
+    }
   };
 
   const handleDeleteLead = (id: string) => {
@@ -153,6 +193,35 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
             </motion.div>
           ) : (
             <form onSubmit={handleFormSubmit} className="space-y-5">
+              {errors.submit && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-3 rounded-xl flex items-center space-x-2 font-semibold animate-in fade-in duration-200">
+                  <AlertCircle size={14} className="shrink-0" />
+                  <span>{errors.submit}</span>
+                </div>
+              )}
+
+              {/* Honeypot fields for anti-spam bot protection */}
+              <div className="absolute opacity-0 -z-50 h-0 w-0 overflow-hidden pointer-events-none" aria-hidden="true">
+                <input
+                  type="text"
+                  name="website"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  placeholder="Leave empty"
+                />
+                <input
+                  type="text"
+                  name="botField"
+                  value={botField}
+                  onChange={(e) => setBotField(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  placeholder="Do not fill"
+                />
+              </div>
+
               <div>
                 <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-[#0A1A14] mb-1.5">
                   Full Name / Parent Name
@@ -459,6 +528,34 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                 </motion.div>
               ) : (
                 <form onSubmit={handleFormSubmit} className="space-y-6">
+                  {errors.submit && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl flex items-center space-x-2 font-semibold animate-in fade-in duration-200">
+                      <AlertCircle size={16} className="shrink-0 animate-pulse" />
+                      <span>{errors.submit}</span>
+                    </div>
+                  )}
+
+                  {/* Honeypot fields for anti-spam bot protection */}
+                  <div className="absolute opacity-0 -z-50 h-0 w-0 overflow-hidden pointer-events-none" aria-hidden="true">
+                    <input
+                      type="text"
+                      name="website"
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      placeholder="Leave empty"
+                    />
+                    <input
+                      type="text"
+                      name="botField"
+                      value={botField}
+                      onChange={(e) => setBotField(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      placeholder="Do not fill"
+                    />
+                  </div>
                   
                   {/* Full name input */}
                   <div>
@@ -632,6 +729,141 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
 
           </div>
 
+        </div>
+
+        {/* Demo Leads Area */}
+        <div id="sandbox-leads" className="mt-16 pt-10 border-t border-[#ECECE6] max-w-5xl mx-auto text-center space-y-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl p-4 sm:p-6 border border-[#ECECE6] shadow-sm">
+            <div className="space-y-1 text-left">
+              <span className="text-[10px] font-mono font-bold text-[#8A6B20]/80 uppercase tracking-widest block bg-[#F5EDD6] px-2.5 py-0.5 rounded-full w-fit">
+                Developer Live Sandbox
+              </span>
+              <h4 className="font-display font-extrabold text-sm sm:text-base text-[#0A1A14]">
+                How do I access form submissions?
+              </h4>
+              <p className="text-xs text-[#526B62] leading-relaxed max-w-lg">
+                Your entries are saved instantly to the local sandbox database for testing. Click the toggle to verify data capture, payloads, and WhatsApp integration schemas.
+              </p>
+            </div>
+            
+            <button
+              onClick={() => setShowLeadViewer(!showLeadViewer)}
+              className="px-5 py-2.5 bg-[#0A1A14] text-white hover:bg-[#153428] font-display font-bold text-xs uppercase tracking-widest rounded-xl transition-all cursor-pointer flex items-center space-x-2 shrink-0 shadow"
+            >
+              <Sparkles size={13} className="text-[#D8BB72]" />
+              <span>{showLeadViewer ? "Hide Lead Registry" : `Open Lead Registry (${storedLeads.length})`}</span>
+            </button>
+          </div>
+
+          <AnimatePresence>
+            {showLeadViewer && (
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 15 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white rounded-[24px] border border-[#ECECE6] p-6 sm:p-8 text-left space-y-6 shadow-md"
+              >
+                <div className="flex items-center justify-between flex-wrap gap-4 border-b border-[#F2F2EC] pb-4">
+                  <div>
+                    <h5 className="font-display font-black text-sm text-[#0A1A14] uppercase tracking-wider">
+                      Sandbox Database Logs
+                    </h5>
+                    <p className="text-xs text-[#7B9B8E] mt-0.5">
+                      Submissions stored locally in browser <code>localStorage</code> (Key: <code>quranrise_inquiries</code>)
+                    </p>
+                  </div>
+                  
+                  {storedLeads.length > 0 && (
+                    <button
+                      onClick={handleClearAllLeads}
+                      className="text-xs font-mono font-bold text-red-500 hover:text-red-600 space-x-1 flex items-center transition-colors px-3 py-1.5 bg-red-50 hover:bg-red-100 rounded-lg cursor-pointer border-0"
+                    >
+                      <Trash2 size={13} />
+                      <span>Clear Database Logs</span>
+                    </button>
+                  )}
+                </div>
+
+                {storedLeads.length === 0 ? (
+                  <div className="text-center py-12 space-y-2">
+                    <p className="text-sm font-medium text-gray-400">
+                      No sandbox records found.
+                    </p>
+                    <p className="text-xs text-gray-400 max-w-sm mx-auto">
+                      Fill out and submit the "Schedule Your Free Trial" form above to watch your submission capture in real-time with flawless details!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {storedLeads.map((lead) => (
+                      <div 
+                        key={lead.id}
+                        className="bg-[#FAFAF8] p-4 sm:p-5 rounded-2xl border border-[#ECECE6] hover:border-[#C8A24A]/30 relative group transition-all"
+                      >
+                        <button
+                          onClick={() => handleDeleteLead(lead.id)}
+                          className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors p-1 bg-transparent border-0 cursor-pointer"
+                          title="Delete Lead"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between pr-6">
+                            <div>
+                              <span className="text-[10px] font-mono font-bold bg-[#F5EDD6] text-[#8A6B20] px-2 py-0.5 rounded uppercase tracking-wider">
+                                {lead.courseInterest.replace('-', ' ')}
+                              </span>
+                              <h6 className="font-display font-[900] text-sm text-[#0A1A14] mt-1.5">
+                                {lead.fullName}
+                              </h6>
+                            </div>
+                            <span className="text-[10px] text-gray-400 font-mono">
+                              {new Date(lead.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+
+                          <div className="space-y-1.5 text-xs text-[#526B62]">
+                            <div className="flex items-center space-x-2">
+                              <Mail size={12} className="text-[#8A6B20]" />
+                              <span>{lead.email}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Phone size={12} className="text-[#51DE78]" />
+                              <span>{lead.phone}</span>
+                              <a
+                                href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[10px] bg-[#51DE78]/10 text-emerald-800 hover:bg-[#51DE78]/20 px-1.5 py-0.5 rounded font-bold underline ml-2 inline-flex items-center space-x-0.5"
+                              >
+                                <span>WhatsApp Setup</span>
+                              </a>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Globe size={12} className="text-[#8A6B20]" />
+                              <span>Residence: <strong>{lead.country}</strong></span>
+                            </div>
+                          </div>
+
+                          {lead.message && (
+                            <div className="bg-white p-2.5 rounded-xl border border-[#ECECE6] text-xs text-[#4E625A] italic mt-2">
+                              "{lead.message}"
+                            </div>
+                          )}
+
+                          <div className="text-[9px] text-gray-400 font-mono">
+                            ID: {lead.id}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
       </div>

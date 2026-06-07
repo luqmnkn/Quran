@@ -1,29 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { motion } from 'motion/react';
+import Autoplay from 'embla-carousel-autoplay';
 
 interface PremiumCarouselProps {
   children: React.ReactNode[];
+  key?: React.Key | string | number | any;
 }
 
 export default function PremiumCarousel({ children }: PremiumCarouselProps) {
   const uniqueCount = children.length;
 
-  // Duplicate slides if they are too few to support smooth infinite loop in Embla 8
-  let multipliedChildren = [...children];
-  if (uniqueCount > 0 && uniqueCount < 8) {
-    const repeatCount = Math.ceil(8 / uniqueCount);
-    multipliedChildren = [];
+  // Duplicate slides extensively to ensure a perfect visual looping experience on all displays
+  let multipliedChildren: React.ReactNode[] = [];
+  if (uniqueCount > 0) {
+    // Generate at least 24 slides total so there is always a high surplus of cards for seamless wrapping
+    const repeatCount = uniqueCount < 24 ? Math.ceil(24 / uniqueCount) : 2;
     for (let i = 0; i < repeatCount; i++) {
-      multipliedChildren.push(...children);
+      React.Children.forEach(children, (child, childIdx) => {
+        if (child && React.isValidElement(child)) {
+          multipliedChildren.push(
+            React.cloneElement(child, {
+              key: `${child.key || childIdx}-rep-${i}`,
+            } as any)
+          );
+        } else {
+          multipliedChildren.push(child);
+        }
+      });
     }
   }
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: 'center',
-    loop: true,
-    skipSnaps: false,
-  });
+  // Configure Embla with loop: true and official Autoplay plugin
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      align: 'center',
+      loop: true,
+      skipSnaps: false,
+    },
+    [
+      Autoplay({
+        delay: 3500,
+        stopOnInteraction: false,
+        stopOnMouseEnter: true,
+      }),
+    ]
+  );
   
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
@@ -44,35 +66,23 @@ export default function PremiumCarousel({ children }: PremiumCarouselProps) {
     onSelect();
   }, [emblaApi]);
 
-  // Autoplay functionality
-  useEffect(() => {
+  const scrollTo = (index: number) => {
     if (!emblaApi) return;
-
-    let autoplayId: any = null;
-
-    const startAutoplay = () => {
-      stopAutoplay();
-      autoplayId = setInterval(() => {
-        if (emblaApi) emblaApi.scrollNext();
-      }, 3500);
-    };
-
-    const stopAutoplay = () => {
-      if (autoplayId) {
-        clearInterval(autoplayId);
-        autoplayId = null;
-      }
-    };
-
-    emblaApi.on('pointerDown', stopAutoplay);
-    emblaApi.on('settle', startAutoplay);
-
-    startAutoplay();
-
-    return () => stopAutoplay();
-  }, [emblaApi]);
-
-  const scrollTo = (index: number) => emblaApi && emblaApi.scrollTo(index);
+    
+    // Find the closest slide that corresponds to the clicked index
+    const currentSnap = emblaApi.selectedScrollSnap();
+    const slidesLength = multipliedChildren.length;
+    
+    // Check snaps or find closest occurrence to avoid long backward jumps
+    const currentCycle = Math.floor(currentSnap / uniqueCount);
+    const targetIdx = currentCycle * uniqueCount + index;
+    
+    if (targetIdx < slidesLength) {
+      emblaApi.scrollTo(targetIdx);
+    } else {
+      emblaApi.scrollTo(index);
+    }
+  };
 
   if (uniqueCount === 0) return null;
 
@@ -90,20 +100,24 @@ export default function PremiumCarousel({ children }: PremiumCarouselProps) {
             return (
               <div
                 key={idx}
-                className="w-[82%] sm:w-[75%] md:w-[65%] shrink-0 px-3 transition-all duration-500 ease-out"
-                style={{
-                  transform: isSlideActive ? 'scale(1.02)' : 'scale(0.92)',
-                  opacity: isSlideActive ? 1 : 0.65,
-                }}
+                className="w-[82%] sm:w-[75%] md:w-[65%] shrink-0 px-3"
               >
-                <div 
-                  className={`w-full h-full rounded-[30px] transition-all duration-500 overflow-hidden ${
-                    isSlideActive 
-                      ? 'shadow-[0_16px_40px_rgba(200,162,74,0.18)] border-[#C8A24A]/40 ring-1 ring-[#C8A24A]/20' 
-                      : 'shadow-md border-transparent pointer-events-none'
-                  }`}
+                <div
+                  className="w-full h-full transition-all duration-500 ease-out"
+                  style={{
+                    transform: isSlideActive ? 'scale(1.02)' : 'scale(0.95)',
+                    opacity: isSlideActive ? 1 : 0.65,
+                  }}
                 >
-                  {child}
+                  <div 
+                    className={`w-full h-full rounded-[30px] transition-all duration-500 overflow-hidden ${
+                      isSlideActive 
+                        ? 'shadow-[0_16px_40px_rgba(200,162,74,0.18)] border-[#C8A24A]/40 ring-1 ring-[#C8A24A]/20' 
+                        : 'shadow-md border-transparent pointer-events-none'
+                    }`}
+                  >
+                    {child}
+                  </div>
                 </div>
               </div>
             );

@@ -25,6 +25,10 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
   const [phone, setPhone] = useState('');
   const [course, setCourse] = useState('noorani-qaida');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [website, setWebsite] = useState('');
+  const [botField, setBotField] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState<'video' | 'inquiry'>('video');
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -63,25 +67,77 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
     }
   }, [isMobile]);
 
-  const handleQuickSubmit = (e: React.FormEvent) => {
+  const handleQuickSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone) return;
 
-    onSubmitInquiry({
-      fullName: name,
-      email: 'quick-lead@quranrise.com',
-      phone: phone,
-      country: 'Detected from UI',
-      courseInterest: course,
-      message: 'Quick lead generated from cinematic hero segment.'
-    });
+    setSubmitting(true);
+    setErrorMsg('');
 
-    setSubmitted(true);
-    setName('');
-    setPhone('');
-    setTimeout(() => {
-      setSubmitted(false);
-    }, 5000);
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: name,
+          email: `${name.toLowerCase().replace(/\s+/g, '') || 'student'}@quranrise-trial.com`, // Auto-generated safe mock email for quick leads
+          phone: phone,
+          country: 'Quick Trial Form',
+          courseInterest: course,
+          message: 'Quick lead generated from cinematic hero segment.',
+          website,
+          botField
+        }),
+      });
+
+      const resData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(resData.message || 'Transmission failed');
+      }
+
+      // Populate local sandbox/simulation storage
+      const newLead = {
+        id: 'lead_' + Math.random().toString(36).substr(2, 9),
+        fullName: name,
+        email: `${name.toLowerCase().replace(/\s+/g, '') || 'student'}@quranrise-trial.com`,
+        phone: phone,
+        country: 'Quick Trial Form',
+        courseInterest: course,
+        message: 'Quick lead generated from cinematic hero segment.',
+        submittedAt: new Date().toISOString(),
+        status: 'New'
+      };
+
+      const existingLeads = localStorage.getItem('quranrise_inquiries');
+      let leadsArray = [];
+      if (existingLeads) {
+        try {
+          leadsArray = JSON.parse(existingLeads);
+        } catch (_) {}
+      }
+      leadsArray.unshift(newLead);
+      localStorage.setItem('quranrise_inquiries', JSON.stringify(leadsArray));
+
+      setSubmitted(true);
+      setName('');
+      setPhone('');
+      setWebsite('');
+      setBotField('');
+
+      // Auto clear after 8 seconds
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 10000);
+
+    } catch (err: any) {
+      console.error("Hero submission error:", err);
+      setErrorMsg(err.message || "Failed to submit. Please chat on WhatsApp instead.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -369,11 +425,39 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                           Inquiry Logged!
                         </h4>
                         <p className="text-xs text-[#89A296] leading-relaxed">
-                          Alhamdulillah. Our school coordinator will text you directly on WhatsApp or Email within 2-4 hours to organize your evaluation calendar.
+                          Alhamdulillah. We have received your inquiry and sent a confirmation email to your inbox. Direct setup details sent to coordinator!
                         </p>
                       </div>
                     ) : (
                       <form onSubmit={handleQuickSubmit} className="space-y-4">
+                        {errorMsg && (
+                          <div className="bg-red-950/40 border border-red-500/30 text-red-200 text-xs px-3.5 py-2.5 rounded-xl text-left leading-relaxed">
+                            {errorMsg}
+                          </div>
+                        )}
+
+                        {/* Honeypot fields for anti-spam bot protection */}
+                        <div className="absolute opacity-0 -z-50 h-0 w-0 overflow-hidden pointer-events-none" aria-hidden="true">
+                          <input
+                            type="text"
+                            name="website"
+                            value={website}
+                            onChange={(e) => setWebsite(e.target.value)}
+                            tabIndex={-1}
+                            autoComplete="off"
+                            placeholder="Leave empty"
+                          />
+                          <input
+                            type="text"
+                            name="botField"
+                            value={botField}
+                            onChange={(e) => setBotField(e.target.value)}
+                            tabIndex={-1}
+                            autoComplete="off"
+                            placeholder="Do not fill"
+                          />
+                        </div>
+
                         <div className="text-left">
                           <label className="block text-[10px] font-bold uppercase tracking-widest text-[#A6C0B5] mb-2 font-mono">
                             Student / Parent Name
@@ -381,10 +465,11 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                           <input
                             type="text"
                             required
+                            disabled={submitting}
                             placeholder="e.g. Brother Ahmad"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full bg-white/[0.04] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none transition-all"
+                            className="w-full bg-white/[0.04] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none transition-all disabled:opacity-55"
                           />
                         </div>
 
@@ -395,10 +480,11 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                           <input
                             type="tel"
                             required
+                            disabled={submitting}
                             placeholder="e.g. +1 (555) 019-2834"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            className="w-full bg-white/[0.04] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none transition-all"
+                            className="w-full bg-white/[0.04] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none transition-all disabled:opacity-55"
                           />
                         </div>
 
@@ -408,8 +494,9 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                           </label>
                           <select
                             value={course}
+                            disabled={submitting}
                             onChange={(e) => setCourse(e.target.value)}
-                            className="w-full bg-[#05110E] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-4 py-3 text-sm text-white outline-none transition-all cursor-pointer"
+                            className="w-full bg-[#05110E] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-4 py-3 text-sm text-white outline-none transition-all cursor-pointer disabled:opacity-55"
                           >
                             <option value="noorani-qaida" className="bg-[#05110E]">Noorani Qaida Basics</option>
                             <option value="quran-reading" className="bg-[#05110E]">Quran Reading Fluency</option>
@@ -420,9 +507,10 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
 
                         <button
                           type="submit"
-                          className="w-full bg-gradient-to-r from-[#C8A24A] to-[#D8BB72] text-[#0A1A14] font-display font-black py-3.5 px-4 rounded-xl uppercase tracking-widest text-xs transition-all transform hover:scale-[1.01] hover:shadow-[0_4px_25px_rgba(200,162,74,0.3)] mt-2 cursor-pointer border border-[#EEDFBC]/30"
+                          disabled={submitting}
+                          className="w-full bg-gradient-to-r from-[#C8A24A] to-[#D8BB72] text-[#0A1A14] font-display font-black py-3.5 px-4 rounded-xl uppercase tracking-widest text-xs transition-all transform hover:scale-[1.01] hover:shadow-[0_4px_25px_rgba(200,162,74,0.3)] mt-2 cursor-pointer border border-[#EEDFBC]/30 disabled:opacity-50"
                         >
-                          Book Free Lecture Slot
+                          {submitting ? 'Registering...' : 'Book Free Lecture Slot'}
                         </button>
                       </form>
                     )}

@@ -108,7 +108,7 @@ export default function Testimonials() {
 
         {/* 2. MOBILE VIEW: Horizontal Snap-Center Carousel */}
         <div className="block lg:hidden">
-          <PremiumCarousel>
+          <PremiumCarousel key={activeTab}>
             {filtered.map((testimonial) => (
               <div key={testimonial.id} className="h-full">
                 {renderCardContent(testimonial)}
