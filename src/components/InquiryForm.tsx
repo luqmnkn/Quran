@@ -79,30 +79,65 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
     }
 
     try {
-      // POST the lead data to our centralized backend email service
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const endpoint = apiUrl ? `${apiUrl}/send-email` : '/api/send-email';
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fullName,
-          email,
-          phone,
-          country,
-          courseInterest,
-          message,
-          website,
-          botField,
-        }),
-      });
+      const rawApiUrl = import.meta.env.VITE_API_URL;
+      const fallbackUrl = 'https://script.google.com/macros/s/AKfycbwA3BlvXtJEnfQAVLNcCT5QOOk6__LUwgjOrjNF0YlfMvU0HqQScJiQV4OUtFmm3_V3/exec';
+      const apiUrl = (rawApiUrl && String(rawApiUrl).trim() !== '' && String(rawApiUrl) !== 'undefined' && String(rawApiUrl) !== 'null') 
+        ? String(rawApiUrl).trim() 
+        : fallbackUrl;
+      
+      console.log('Sending inquiry lead to API:', apiUrl);
+      
+      if (apiUrl) {
+        const urlLower = apiUrl.toLowerCase();
+        const isGoogleScript = urlLower.includes('script.google.com') || urlLower.includes('/exec') || urlLower.includes('macros/s/');
+        const endpoint = isGoogleScript ? apiUrl : `${apiUrl}/send-email`;
+        
+        // Prepare data package using URL-encoded search formats instead of stringified JSON objects
+        const formPayload = new URLSearchParams();
+        formPayload.append('fullName', fullName);
+        formPayload.append('email', email);
+        formPayload.append('phone', phone);
+        formPayload.append('country', country);
+        formPayload.append('courseInterest', courseInterest);
+        formPayload.append('message', message);
+        formPayload.append('website', website);
+        formPayload.append('botField', botField);
 
-      const resData = await response.json();
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          mode: isGoogleScript ? 'no-cors' : 'cors',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formPayload.toString(),
+        });
 
-      if (!response.ok) {
-        throw new Error(resData.message || 'Error occurred during form processing');
+        if (isGoogleScript) {
+          console.log('Successfully completed fetch to Google Apps Script. Response status:', response.status);
+        } else {
+          if (!response.ok) {
+            throw new Error('Inquiry transmission failed. Please check connection parameters.');
+          }
+
+          const resData = await response.json();
+          if (resData && resData.status === 'error') {
+            throw new Error(resData.message || 'Error occurred during form processing');
+          }
+        }
+      } else {
+        // Safe sandbox simulation fallback
+        console.group("📝 [SANDBOX INTERCEPT] Lead Logged to Browser Cache Only");
+        console.info("Configure VITE_API_URL pointing to Google Sheets WebApp logic to enable real integrations.");
+        console.log("Full Name:", fullName);
+        console.log("Email:", email);
+        console.log("Phone Number:", phone);
+        console.log("Country Selection:", country);
+        console.log("Course Interest:", courseInterest);
+        console.log("Message Content:", message);
+        console.groupEnd();
+
+        // Simulate network latency for a polished spinner effect
+        await new Promise((resolve) => setTimeout(resolve, 800));
       }
 
       // Record for sandbox simulation log

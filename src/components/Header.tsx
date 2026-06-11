@@ -21,6 +21,7 @@ export default function Header({ onOpenTrialModal }: HeaderProps) {
     { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
     { name: 'Courses', href: '#courses' },
+    { name: 'Blogs', href: '#blogs' }
   ];
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -66,7 +67,7 @@ export default function Header({ onOpenTrialModal }: HeaderProps) {
               key={link.name}
               href={link.href}
               onClick={(e) => handleLinkClick(e, link.href)}
-              className="font-display font-black text-[10px] sm:text-xs uppercase tracking-widest text-[#4E625A] hover:text-[#C8A24A] transition-colors duration-200"
+              className="font-display font-black text-[8px] sm:text-xs tracking-widest text-[#4E625A] hover:text-[#C8A24A] transition-colors duration-200"
             >
               {link.name}
             </a>

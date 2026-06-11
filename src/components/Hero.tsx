@@ -75,29 +75,64 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
     setErrorMsg('');
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const endpoint = apiUrl ? `${apiUrl}/send-email` : '/api/send-email';
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fullName: name,
-          email: `${name.toLowerCase().replace(/\s+/g, '') || 'student'}@quranrise-trial.com`, // Auto-generated safe mock email for quick leads
-          phone: phone,
-          country: 'Quick Trial Form',
-          courseInterest: course,
-          message: 'Quick lead generated from cinematic hero segment.',
-          website,
-          botField
-        }),
-      });
+      const rawApiUrl = import.meta.env.VITE_API_URL;
+      const fallbackUrl = 'https://script.google.com/macros/s/AKfycbwA3BlvXtJEnfQAVLNcCT5QOOk6__LUwgjOrjNF0YlfMvU0HqQScJiQV4OUtFmm3_V3/exec';
+      const apiUrl = (rawApiUrl && String(rawApiUrl).trim() !== '' && String(rawApiUrl) !== 'undefined' && String(rawApiUrl) !== 'null') 
+        ? String(rawApiUrl).trim() 
+        : fallbackUrl;
+      const autoLeadEmail = `${name.toLowerCase().replace(/\s+/g, '') || 'student'}@quranrise-trial.com`;
 
-      const resData = await response.json();
+      console.log('Sending hero lead to API:', apiUrl);
 
-      if (!response.ok) {
-        throw new Error(resData.message || 'Transmission failed');
+      if (apiUrl) {
+        const urlLower = apiUrl.toLowerCase();
+        const isGoogleScript = urlLower.includes('script.google.com') || urlLower.includes('/exec') || urlLower.includes('macros/s/');
+        const endpoint = isGoogleScript ? apiUrl : `${apiUrl}/send-email`;
+        
+        // Prepare data package using URL-encoded search formats instead of stringified JSON objects
+        const formPayload = new URLSearchParams();
+        formPayload.append('fullName', name);
+        formPayload.append('email', autoLeadEmail);
+        formPayload.append('phone', phone);
+        formPayload.append('country', 'Quick Trial Form');
+        formPayload.append('courseInterest', course);
+        formPayload.append('message', 'Quick lead generated from cinematic hero segment.');
+        formPayload.append('website', website);
+        formPayload.append('botField', botField);
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          mode: isGoogleScript ? 'no-cors' : 'cors',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formPayload.toString(),
+        });
+
+        if (isGoogleScript) {
+          console.log('Successfully completed fetch to Google Apps Script for Hero lead. Response status:', response.status);
+        } else {
+          if (!response.ok) {
+            throw new Error('Transmission failed. Please message us on WhatsApp.');
+          }
+
+          const resData = await response.json();
+          if (resData && resData.status === 'error') {
+            throw new Error(resData.message || 'Transmission failed');
+          }
+        }
+      } else {
+        // Safe sandbox simulation fallback
+        console.group("📝 [SANDBOX INTERCEPT] Quick Hero Lead Logged to Browser Cache Only");
+        console.info("Configure VITE_API_URL pointing to Google Sheets WebApp logic to enable real integrations.");
+        console.log("Full Name:", name);
+        console.log("Email (Auto):", autoLeadEmail);
+        console.log("Phone Number:", phone);
+        console.log("Course Interest:", course);
+        console.groupEnd();
+
+        // Simulate network latency for a polished spinner effect
+        await new Promise((resolve) => setTimeout(resolve, 800));
       }
 
       // Populate local sandbox/simulation storage
