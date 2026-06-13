@@ -14,6 +14,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+1');
   const [country, setCountry] = useState('United States');
   const [courseInterest, setCourseInterest] = useState('noorani-qaida');
   const [message, setMessage] = useState('');
@@ -22,8 +23,17 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
   
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [storedLeads, setStoredLeads] = useState<InquirySubmission[]>([]);
-  const [showLeadViewer, setShowLeadViewer] = useState(false);
+
+  const cleanAndFormatPhone = (code: string, num: string) => {
+    let cleanedNum = num.replace(/[\s\-()]/g, '');
+    if (cleanedNum.startsWith('+')) {
+      return cleanedNum;
+    }
+    if (code && cleanedNum.startsWith('0')) {
+      cleanedNum = cleanedNum.substring(1);
+    }
+    return code + cleanedNum;
+  };
 
   // Sync Prefill Course Changes
   useEffect(() => {
@@ -34,18 +44,6 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
       else if (prefilledCourse.toLowerCase().includes('memorization') || prefilledCourse.toLowerCase().includes('hifz')) setCourseInterest('memorization');
     }
   }, [prefilledCourse]);
-
-  // Load leads from localStorage for simulation/demo features
-  useEffect(() => {
-    const raw = localStorage.getItem('quranrise_inquiries');
-    if (raw) {
-      try {
-        setStoredLeads(JSON.parse(raw));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  }, [status]);
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
@@ -79,29 +77,28 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
     }
 
     try {
-      const rawApiUrl = import.meta.env.VITE_API_URL;
-      const fallbackUrl = 'https://script.google.com/macros/s/AKfycbwA3BlvXtJEnfQAVLNcCT5QOOk6__LUwgjOrjNF0YlfMvU0HqQScJiQV4OUtFmm3_V3/exec';
-      const apiUrl = (rawApiUrl && String(rawApiUrl).trim() !== '' && String(rawApiUrl) !== 'undefined' && String(rawApiUrl) !== 'null') 
-        ? String(rawApiUrl).trim() 
-        : fallbackUrl;
+
+          const apiUrl = "https://script.google.com/macros/s/AKfycbxy-K4qg-I0xEX-BWQH60CTqYPGTz5Xr1LLsuGfLFesraTdC7-5gjVtCmTBDdHCBocIdg/exec"
       
-      console.log('Sending inquiry lead to API:', apiUrl);
       
       if (apiUrl) {
         const urlLower = apiUrl.toLowerCase();
         const isGoogleScript = urlLower.includes('script.google.com') || urlLower.includes('/exec') || urlLower.includes('macros/s/');
-        const endpoint = isGoogleScript ? apiUrl : `${apiUrl}/send-email`;
+        const endpoint = isGoogleScript ? apiUrl : `${apiUrl}`;
+        
+        const formattedPhone = cleanAndFormatPhone(countryCode, phone);
         
         // Prepare data package using URL-encoded search formats instead of stringified JSON objects
         const formPayload = new URLSearchParams();
         formPayload.append('fullName', fullName);
         formPayload.append('email', email);
-        formPayload.append('phone', phone);
+        formPayload.append('phone', formattedPhone);
         formPayload.append('country', country);
         formPayload.append('courseInterest', courseInterest);
         formPayload.append('message', message);
         formPayload.append('website', website);
         formPayload.append('botField', botField);
+
 
         const response = await fetch(endpoint, {
           method: 'POST',
@@ -125,46 +122,10 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
           }
         }
       } else {
-        // Safe sandbox simulation fallback
-        console.group("📝 [SANDBOX INTERCEPT] Lead Logged to Browser Cache Only");
-        console.info("Configure VITE_API_URL pointing to Google Sheets WebApp logic to enable real integrations.");
-        console.log("Full Name:", fullName);
-        console.log("Email:", email);
-        console.log("Phone Number:", phone);
-        console.log("Country Selection:", country);
-        console.log("Course Interest:", courseInterest);
-        console.log("Message Content:", message);
-        console.groupEnd();
-
+  
         // Simulate network latency for a polished spinner effect
         await new Promise((resolve) => setTimeout(resolve, 800));
       }
-
-      // Record for sandbox simulation log
-      const newLead: InquirySubmission = {
-        id: 'lead_' + Math.random().toString(36).substr(2, 9),
-        fullName,
-        email,
-        phone,
-        country,
-        courseInterest,
-        message,
-        submittedAt: new Date().toISOString(),
-        status: 'New'
-      };
-
-      const existingLeads = localStorage.getItem('quranrise_inquiries');
-      let leadsArray: InquirySubmission[] = [];
-      if (existingLeads) {
-        try {
-          leadsArray = JSON.parse(existingLeads);
-        } catch (err) {
-          leadsArray = [];
-        }
-      }
-      leadsArray.unshift(newLead);
-      localStorage.setItem('quranrise_inquiries', JSON.stringify(leadsArray));
-      setStoredLeads(leadsArray);
 
       setStatus('success');
       setFullName('');
@@ -194,18 +155,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
     }
   };
 
-  const handleDeleteLead = (id: string) => {
-    const updated = storedLeads.filter(l => l.id !== id);
-    localStorage.setItem('quranrise_inquiries', JSON.stringify(updated));
-    setStoredLeads(updated);
-  };
-
-  const handleClearAllLeads = () => {
-    if (confirm('Clear all local simulation leads?')) {
-      localStorage.removeItem('quranrise_inquiries');
-      setStoredLeads([]);
-    }
-  };
+  // Modal submission success callback is handled in handleFormSubmit inline
 
   if (isModalMode) {
     return (
@@ -312,18 +262,35 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                   <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-[#0A1A14] mb-1.5">
                     WhatsApp Number
                   </label>
-                  <input
-                    type="tel"
-                    placeholder="e.g. +1 (315) 555-0100"
-                    value={phone}
-                    onChange={(e) => {
-                      setPhone(e.target.value);
-                      if (errors.phone) delete errors.phone;
-                    }}
-                    className={`w-full bg-[#FAFAF8] border ${
-                      errors.phone ? 'border-red-500' : 'border-[#ECECE6] focus:border-[#C8A24A]'
-                    } rounded-xl px-4 py-3 text-sm text-[#0A1A14] outline-none transition-all placeholder-gray-450`}
-                  />
+                  <div className={`flex rounded-xl bg-[#FAFAF8] border ${
+                    errors.phone ? 'border-red-500' : 'border-[#ECECE6] focus-within:border-[#C8A24A]'
+                  } overflow-hidden transition-all duration-200`}>
+                    <select
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                      className="bg-transparent text-xs text-[#0A1A14] py-3 pl-3 pr-1 outline-none border-r border-[#ECECE6]/80 cursor-pointer min-w-[75px]"
+                    >
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+61">🇦🇺 +61</option>
+                      <option value="+966">🇸🇦 +966</option>
+                      <option value="+971">🇦🇪 +971</option>
+                      <option value="+974">🇶🇦 +974</option>
+                      <option value="+92">🇵🇰 +92</option>
+                      <option value="+91">🇮🇳 +91</option>
+                      <option value="">Other</option>
+                    </select>
+                    <input
+                      type="tel"
+                      placeholder="315 555-0100"
+                      value={phone}
+                      onChange={(e) => {
+                        setPhone(e.target.value);
+                        if (errors.phone) delete errors.phone;
+                      }}
+                      className="w-full bg-transparent px-4 py-3 text-sm text-[#0A1A14] outline-none placeholder-gray-450"
+                    />
+                  </div>
                   {errors.phone && (
                     <p className="text-xs text-red-500 mt-1 flex items-center space-x-1 font-semibold">
                       <AlertCircle size={12} />
@@ -651,18 +618,35 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                       <label className="block text-xs font-mono font-bold uppercase tracking-widest text-[#0A1A14] mb-2.5">
                         WhatsApp Contact Number
                       </label>
-                      <input
-                        type="tel"
-                        placeholder="e.g. +1 (315) 555-0100"
-                        value={phone}
-                        onChange={(e) => {
-                          setPhone(e.target.value);
-                          if (errors.phone) delete errors.phone;
-                        }}
-                        className={`w-full bg-[#FAFAF8] border ${
-                          errors.phone ? 'border-red-500' : 'border-[#ECECE6] focus:border-[#C8A24A]'
-                        } rounded-xl px-4 py-3.5 text-sm text-[#0A1A14] outline-none transition-all placeholder-gray-400`}
-                      />
+                      <div className={`flex rounded-xl bg-[#FAFAF8] border ${
+                        errors.phone ? 'border-red-500' : 'border-[#ECECE6] focus-within:border-[#C8A24A]'
+                      } overflow-hidden transition-all duration-200`}>
+                        <select
+                          value={countryCode}
+                          onChange={(e) => setCountryCode(e.target.value)}
+                          className="bg-transparent text-xs text-[#0A1A14] py-3.5 pl-3 pr-1 outline-none border-r border-[#ECECE6]/80 cursor-pointer min-w-[75px]"
+                        >
+                          <option value="+1">🇺🇸 +1</option>
+                          <option value="+44">🇬🇧 +44</option>
+                          <option value="+61">🇦🇺 +61</option>
+                          <option value="+966">🇸🇦 +966</option>
+                          <option value="+971">🇦🇪 +971</option>
+                          <option value="+974">🇶🇦 +974</option>
+                          <option value="+92">🇵🇰 +92</option>
+                          <option value="+91">🇮🇳 +91</option>
+                          <option value="">Other</option>
+                        </select>
+                        <input
+                          type="tel"
+                          placeholder="315 555-0100"
+                          value={phone}
+                          onChange={(e) => {
+                            setPhone(e.target.value);
+                            if (errors.phone) delete errors.phone;
+                          }}
+                          className="w-full bg-transparent px-4 py-3.5 text-sm text-[#0A1A14] outline-none placeholder-gray-400"
+                        />
+                      </div>
                       {errors.phone && (
                         <p className="text-xs text-red-500 mt-2 flex items-center space-x-1 font-semibold">
                           <AlertCircle size={13} />
@@ -768,140 +752,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
 
         </div>
 
-        {/* Demo Leads Area */}
-        <div id="sandbox-leads" className="mt-16 pt-10 border-t border-[#ECECE6] max-w-5xl mx-auto text-center space-y-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl p-4 sm:p-6 border border-[#ECECE6] shadow-sm">
-            <div className="space-y-1 text-left">
-              <span className="text-[10px] font-mono font-bold text-[#8A6B20]/80 uppercase tracking-widest block bg-[#F5EDD6] px-2.5 py-0.5 rounded-full w-fit">
-                Developer Live Sandbox
-              </span>
-              <h4 className="font-display font-extrabold text-sm sm:text-base text-[#0A1A14]">
-                How do I access form submissions?
-              </h4>
-              <p className="text-xs text-[#526B62] leading-relaxed max-w-lg">
-                Your entries are saved instantly to the local sandbox database for testing. Click the toggle to verify data capture, payloads, and WhatsApp integration schemas.
-              </p>
-            </div>
-            
-            <button
-              onClick={() => setShowLeadViewer(!showLeadViewer)}
-              className="px-5 py-2.5 bg-[#0A1A14] text-white hover:bg-[#153428] font-display font-bold text-xs uppercase tracking-widest rounded-xl transition-all cursor-pointer flex items-center space-x-2 shrink-0 shadow"
-            >
-              <Sparkles size={13} className="text-[#D8BB72]" />
-              <span>{showLeadViewer ? "Hide Lead Registry" : `Open Lead Registry (${storedLeads.length})`}</span>
-            </button>
-          </div>
-
-          <AnimatePresence>
-            {showLeadViewer && (
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 15 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white rounded-[24px] border border-[#ECECE6] p-6 sm:p-8 text-left space-y-6 shadow-md"
-              >
-                <div className="flex items-center justify-between flex-wrap gap-4 border-b border-[#F2F2EC] pb-4">
-                  <div>
-                    <h5 className="font-display font-black text-sm text-[#0A1A14] uppercase tracking-wider">
-                      Sandbox Database Logs
-                    </h5>
-                    <p className="text-xs text-[#7B9B8E] mt-0.5">
-                      Submissions stored locally in browser <code>localStorage</code> (Key: <code>quranrise_inquiries</code>)
-                    </p>
-                  </div>
-                  
-                  {storedLeads.length > 0 && (
-                    <button
-                      onClick={handleClearAllLeads}
-                      className="text-xs font-mono font-bold text-red-500 hover:text-red-600 space-x-1 flex items-center transition-colors px-3 py-1.5 bg-red-50 hover:bg-red-100 rounded-lg cursor-pointer border-0"
-                    >
-                      <Trash2 size={13} />
-                      <span>Clear Database Logs</span>
-                    </button>
-                  )}
-                </div>
-
-                {storedLeads.length === 0 ? (
-                  <div className="text-center py-12 space-y-2">
-                    <p className="text-sm font-medium text-gray-400">
-                      No sandbox records found.
-                    </p>
-                    <p className="text-xs text-gray-400 max-w-sm mx-auto">
-                      Fill out and submit the "Schedule Your Free Trial" form above to watch your submission capture in real-time with flawless details!
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {storedLeads.map((lead) => (
-                      <div 
-                        key={lead.id}
-                        className="bg-[#FAFAF8] p-4 sm:p-5 rounded-2xl border border-[#ECECE6] hover:border-[#C8A24A]/30 relative group transition-all"
-                      >
-                        <button
-                          onClick={() => handleDeleteLead(lead.id)}
-                          className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors p-1 bg-transparent border-0 cursor-pointer"
-                          title="Delete Lead"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between pr-6">
-                            <div>
-                              <span className="text-[10px] font-mono font-bold bg-[#F5EDD6] text-[#8A6B20] px-2 py-0.5 rounded uppercase tracking-wider">
-                                {lead.courseInterest.replace('-', ' ')}
-                              </span>
-                              <h6 className="font-display font-[900] text-sm text-[#0A1A14] mt-1.5">
-                                {lead.fullName}
-                              </h6>
-                            </div>
-                            <span className="text-[10px] text-gray-400 font-mono">
-                              {new Date(lead.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </div>
-
-                          <div className="space-y-1.5 text-xs text-[#526B62]">
-                            <div className="flex items-center space-x-2">
-                              <Mail size={12} className="text-[#8A6B20]" />
-                              <span>{lead.email}</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Phone size={12} className="text-[#51DE78]" />
-                              <span>{lead.phone}</span>
-                              <a
-                                href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-[10px] bg-[#51DE78]/10 text-emerald-800 hover:bg-[#51DE78]/20 px-1.5 py-0.5 rounded font-bold underline ml-2 inline-flex items-center space-x-0.5"
-                              >
-                                <span>WhatsApp Setup</span>
-                              </a>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Globe size={12} className="text-[#8A6B20]" />
-                              <span>Residence: <strong>{lead.country}</strong></span>
-                            </div>
-                          </div>
-
-                          {lead.message && (
-                            <div className="bg-white p-2.5 rounded-xl border border-[#ECECE6] text-xs text-[#4E625A] italic mt-2">
-                              "{lead.message}"
-                            </div>
-                          )}
-
-                          <div className="text-[9px] text-gray-400 font-mono">
-                            ID: {lead.id}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        {/* No sandbox section */}
 
       </div>
     </section>

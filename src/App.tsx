@@ -56,11 +56,6 @@ export default function App() {
   return (
     <div className="relative min-h-screen font-sans antialiased text-gray-950 bg-gray-50/50">
       
-      {/* Scroll Progress Bar Indicator */}
-      <div
-        className="fixed top-0 left-0 h-1 bg-gold-accent-400 z-50 transition-all duration-100 ease-out"
-        style={{ width: `${scrollProgress}%` }}
-      />
 
       {/* Header Sticky Component */}
       <Header onOpenTrialModal={() => setIsTrialModalOpen(true)} />

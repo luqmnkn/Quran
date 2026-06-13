@@ -23,6 +23,8 @@ interface HeroProps {
 export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+1');
+  const [email, setEmail] = useState('');
   const [course, setCourse] = useState('noorani-qaida');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -33,14 +35,23 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
   const [activeTab, setActiveTab] = useState<'video' | 'inquiry'>('video');
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const cleanAndFormatPhone = (code: string, num: string) => {
+    let cleanedNum = num.replace(/[\s\-()]/g, '');
+    if (cleanedNum.startsWith('+')) {
+      return cleanedNum;
+    }
+    if (code && cleanedNum.startsWith('0')) {
+      cleanedNum = cleanedNum.substring(1);
+    }
+    return code + cleanedNum;
+  };
+
   // Rotating text values representing the requested courses
   const rotatingWords = [
     'Tajweed',
     'Memorization',
     'Recitation',
-    'Daily Duas',
-    'Adhan',
-    'Basics of Deen'
+    'Qaida'
   ];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
@@ -69,36 +80,35 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
 
   const handleQuickSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    if (!name || !phone || !email) return;
 
     setSubmitting(true);
     setErrorMsg('');
 
     try {
-      const rawApiUrl = import.meta.env.VITE_API_URL;
-      const fallbackUrl = 'https://script.google.com/macros/s/AKfycbwA3BlvXtJEnfQAVLNcCT5QOOk6__LUwgjOrjNF0YlfMvU0HqQScJiQV4OUtFmm3_V3/exec';
-      const apiUrl = (rawApiUrl && String(rawApiUrl).trim() !== '' && String(rawApiUrl) !== 'undefined' && String(rawApiUrl) !== 'null') 
-        ? String(rawApiUrl).trim() 
-        : fallbackUrl;
-      const autoLeadEmail = `${name.toLowerCase().replace(/\s+/g, '') || 'student'}@quranrise-trial.com`;
-
-      console.log('Sending hero lead to API:', apiUrl);
-
+     
+     
+          const apiUrl = "https://script.google.com/macros/s/AKfycbxy-K4qg-I0xEX-BWQH60CTqYPGTz5Xr1LLsuGfLFesraTdC7-5gjVtCmTBDdHCBocIdg/exec"
+      
+      
       if (apiUrl) {
         const urlLower = apiUrl.toLowerCase();
         const isGoogleScript = urlLower.includes('script.google.com') || urlLower.includes('/exec') || urlLower.includes('macros/s/');
-        const endpoint = isGoogleScript ? apiUrl : `${apiUrl}/send-email`;
+        const endpoint = isGoogleScript ? apiUrl : `${apiUrl}`;
         
+        const formattedPhone = cleanAndFormatPhone(countryCode, phone);
+
         // Prepare data package using URL-encoded search formats instead of stringified JSON objects
         const formPayload = new URLSearchParams();
         formPayload.append('fullName', name);
-        formPayload.append('email', autoLeadEmail);
-        formPayload.append('phone', phone);
-        formPayload.append('country', 'Quick Trial Form');
+        formPayload.append('email', email);
+        formPayload.append('phone', formattedPhone);
+        formPayload.append('country', 'Quick Trial Request');
         formPayload.append('courseInterest', course);
         formPayload.append('message', 'Quick lead generated from cinematic hero segment.');
         formPayload.append('website', website);
         formPayload.append('botField', botField);
+
 
         const response = await fetch(endpoint, {
           method: 'POST',
@@ -110,57 +120,27 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
         });
 
         if (isGoogleScript) {
-          console.log('Successfully completed fetch to Google Apps Script for Hero lead. Response status:', response.status);
+          console.log('Successfully completed fetch to Google Apps Script. Response status:', response.status);
         } else {
           if (!response.ok) {
-            throw new Error('Transmission failed. Please message us on WhatsApp.');
+            throw new Error('Inquiry transmission failed. Please check connection parameters.');
           }
 
           const resData = await response.json();
           if (resData && resData.status === 'error') {
-            throw new Error(resData.message || 'Transmission failed');
+            throw new Error(resData.message || 'Error occurred during form processing');
           }
         }
       } else {
-        // Safe sandbox simulation fallback
-        console.group("📝 [SANDBOX INTERCEPT] Quick Hero Lead Logged to Browser Cache Only");
-        console.info("Configure VITE_API_URL pointing to Google Sheets WebApp logic to enable real integrations.");
-        console.log("Full Name:", name);
-        console.log("Email (Auto):", autoLeadEmail);
-        console.log("Phone Number:", phone);
-        console.log("Course Interest:", course);
-        console.groupEnd();
-
+  
         // Simulate network latency for a polished spinner effect
         await new Promise((resolve) => setTimeout(resolve, 800));
       }
 
-      // Populate local sandbox/simulation storage
-      const newLead = {
-        id: 'lead_' + Math.random().toString(36).substr(2, 9),
-        fullName: name,
-        email: `${name.toLowerCase().replace(/\s+/g, '') || 'student'}@quranrise-trial.com`,
-        phone: phone,
-        country: 'Quick Trial Form',
-        courseInterest: course,
-        message: 'Quick lead generated from cinematic hero segment.',
-        submittedAt: new Date().toISOString(),
-        status: 'New'
-      };
-
-      const existingLeads = localStorage.getItem('quranrise_inquiries');
-      let leadsArray = [];
-      if (existingLeads) {
-        try {
-          leadsArray = JSON.parse(existingLeads);
-        } catch (_) {}
-      }
-      leadsArray.unshift(newLead);
-      localStorage.setItem('quranrise_inquiries', JSON.stringify(leadsArray));
-
       setSubmitted(true);
       setName('');
       setPhone('');
+      setEmail('');
       setWebsite('');
       setBotField('');
 
@@ -246,7 +226,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
 
             {/* Premium subtitle in Inter 500 */}
             <p className="font-sans font-medium text-xs sm:text-base md:text-lg lg:text-[19px] text-[#A6C0B5] max-w-full sm:max-w-2xl leading-relaxed">
-              Connect live with highly learned, certified native Arab tutors. Experience personalized, safe, 1-on-1 sessions designed with expert care for kids and adults.
+              Connect live with highly learned, Experience personalized, safe, 1-on-1 sessions designed with expert care for kids and adults.
             </p>
 
             {/* Combined 4-Button / Badges Grid for spacing efficiency */}
@@ -277,8 +257,8 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                   <Award size={16} />
                 </div>
                 <div className="text-left">
-                  <span className="block text-white font-black text-[11px] sm:text-xs">Certified Ijazah</span>
-                  <span className="text-[9px] sm:text-[10px] text-[#89A296] font-medium leading-none">Verified native tutors</span>
+                  <span className="block text-white font-black text-[11px] sm:text-xs">Qualified Quran Teachers</span>
+                  <span className="text-[9px] sm:text-[10px] text-[#89A296] font-medium leading-none">Experienced & Verified Instructors</span>
                 </div>
               </div>
 
@@ -298,7 +278,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
             <div className="pt-4 flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-[#7B9B8E] border-t border-white/5">
               <div className="flex items-center space-x-2">
                 <span className="w-2 h-2 rounded-full bg-[#51DE78] animate-pulse"></span>
-                <span className="font-medium"><strong>241 Families</strong> online session active</span>
+                <span className="font-medium">Trusted by Families Worldwide</span>
               </div>
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
@@ -437,18 +417,18 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.96 }}
                     transition={{ duration: 0.35, ease: 'easeOut' }}
-                    className="w-full bg-[#0A1D17]/95 border border-[#C8A24A]/25 p-8 rounded-[36px] sm:rounded-[44px] shadow-[0_24px_80px_rgba(0,0,0,0.65)] backdrop-blur-xl relative overflow-hidden"
+                    className="w-full bg-[#0A1D17]/95 border border-[#C8A24A]/25 p-6 rounded-[36px] sm:rounded-[44px] shadow-[0_24px_80px_rgba(0,0,0,0.65)] backdrop-blur-xl relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#C8A24A]/10 rounded-full blur-2xl pointer-events-none"></div>
                     
-                    <div className="text-center pb-5 mb-5 border-b border-white/10">
+                    <div className="text-center pb-3.5 mb-3.5 border-b border-white/10">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-[#D8BB72] font-mono">
                         Free Trial Registration
                       </span>
-                      <h3 className="font-display font-[900] text-2xl text-white mt-1">
+                      <h3 className="font-display font-[900] text-xl text-white mt-0.5">
                         Secure Your Free Trial
                       </h3>
-                      <p className="text-xs text-[#89A296] mt-2 max-w-sm mx-auto leading-relaxed">
+                      <p className="text-[11px] text-[#89A296] mt-1 max-w-sm mx-auto leading-relaxed">
                         Specify details to establish a patient male or female certified Sheikh block.
                       </p>
                     </div>
@@ -461,14 +441,14 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                         <h4 className="font-display font-extrabold text-lg text-white">
                           Inquiry Logged!
                         </h4>
-                        <p className="text-xs text-[#89A296] leading-relaxed">
+                        <p className="text-xs text-[#89A296] leading-relaxed font-medium">
                           Alhamdulillah. We have received your inquiry and sent a confirmation email to your inbox. Direct setup details sent to coordinator!
                         </p>
                       </div>
                     ) : (
-                      <form onSubmit={handleQuickSubmit} className="space-y-4">
+                      <form onSubmit={handleQuickSubmit} className="space-y-3.5">
                         {errorMsg && (
-                          <div className="bg-red-950/40 border border-red-500/30 text-red-200 text-xs px-3.5 py-2.5 rounded-xl text-left leading-relaxed">
+                          <div className="bg-red-950/40 border border-red-500/30 text-red-200 text-xs px-3 py-2 rounded-xl text-left leading-relaxed">
                             {errorMsg}
                           </div>
                         )}
@@ -495,51 +475,90 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                           />
                         </div>
 
-                        <div className="text-left">
-                          <label className="block text-[10px] font-bold uppercase tracking-widest text-[#A6C0B5] mb-2 font-mono">
-                            Student / Parent Name
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            disabled={submitting}
-                            placeholder="e.g. Brother Ahmad"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full bg-white/[0.04] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none transition-all disabled:opacity-55"
-                          />
+                        {/* Two Columns: Name & Email */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                          <div className="text-left">
+                            <label className="block text-[10px] font-bold uppercase tracking-widest text-[#A6C0B5] mb-1.5 font-mono">
+                              Student / Parent Name
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              disabled={submitting}
+                              placeholder="e.g. Brother Ahmad"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              className="w-full bg-white/[0.04] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all disabled:opacity-55"
+                            />
+                          </div>
+
+                          <div className="text-left">
+                            <label className="block text-[10px] font-bold uppercase tracking-widest text-[#A6C0B5] mb-1.5 font-mono">
+                              Email Address
+                            </label>
+                            <input
+                              type="email"
+                              required
+                              disabled={submitting}
+                              placeholder="e.g. ahmad@example.com"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              className="w-full bg-white/[0.04] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all disabled:opacity-55"
+                            />
+                          </div>
                         </div>
 
-                        <div className="text-left">
-                          <label className="block text-[10px] font-bold uppercase tracking-widest text-[#A6C0B5] mb-2 font-mono">
-                            WhatsApp / Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            required
-                            disabled={submitting}
-                            placeholder="e.g. +1 (555) 019-2834"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            className="w-full bg-white/[0.04] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none transition-all disabled:opacity-55"
-                          />
-                        </div>
+                        {/* Two Columns: WhatsApp & Syllabus Choice */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                          <div className="text-left">
+                            <label className="block text-[10px] font-bold uppercase tracking-widest text-[#A6C0B5] mb-1.5 font-mono">
+                              WhatsApp / Phone Number
+                            </label>
+                            <div className="flex rounded-xl border border-white/10 bg-white/[0.04] focus-within:border-[#C8A24A] focus-within:ring-1 focus-within:ring-[#C8A24A] transition-all overflow-hidden text-white">
+                              <select
+                                value={countryCode}
+                                disabled={submitting}
+                                onChange={(e) => setCountryCode(e.target.value)}
+                                className="bg-[#05110E] text-xs text-white/80 py-2.5 pl-2.5 pr-0.5 outline-none border-0 border-r border-white/10 cursor-pointer min-w-[70px]"
+                              >
+                                <option value="+1" className="bg-[#05110E]">🇺🇸 +1</option>
+                                <option value="+44" className="bg-[#05110E]">🇬🇧 +44</option>
+                                <option value="+61" className="bg-[#05110E]">🇦🇺 +61</option>
+                                <option value="+966" className="bg-[#05110E]">🇸🇦 +966</option>
+                                <option value="+971" className="bg-[#05110E]">🇦🇪 +971</option>
+                                <option value="+974" className="bg-[#05110E]">🇶🇦 +974</option>
+                                <option value="+92" className="bg-[#05110E]">🇵🇰 +92</option>
+                                <option value="+91" className="bg-[#05110E]">🇮🇳 +91</option>
+                                <option value="" className="bg-[#05110E]">Other</option>
+                              </select>
+                              <input
+                                type="tel"
+                                required
+                                disabled={submitting}
+                                placeholder="315 555-0100"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                className="w-full bg-transparent px-3.5 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all"
+                              />
+                            </div>
+                          </div>
 
-                        <div className="text-left">
-                          <label className="block text-[10px] font-bold uppercase tracking-widest text-[#A6C0B5] mb-2 font-mono">
-                            Syllabus / Path Choice
-                          </label>
-                          <select
-                            value={course}
-                            disabled={submitting}
-                            onChange={(e) => setCourse(e.target.value)}
-                            className="w-full bg-[#05110E] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-4 py-3 text-sm text-white outline-none transition-all cursor-pointer disabled:opacity-55"
-                          >
-                            <option value="noorani-qaida" className="bg-[#05110E]">Noorani Qaida Basics</option>
-                            <option value="quran-reading" className="bg-[#05110E]">Quran Reading Fluency</option>
-                            <option value="tajweed" className="bg-[#05110E]">Advanced Tajweed Rules</option>
-                            <option value="memorization" className="bg-[#05110E]">Quran Memorization (Hifz)</option>
-                          </select>
+                          <div className="text-left">
+                            <label className="block text-[10px] font-bold uppercase tracking-widest text-[#A6C0B5] mb-1.5 font-mono">
+                              Syllabus / Path Choice
+                            </label>
+                            <select
+                              value={course}
+                              disabled={submitting}
+                              onChange={(e) => setCourse(e.target.value)}
+                              className="w-full bg-[#05110E] border border-white/10 focus:border-[#C8A24A] focus:ring-1 focus:ring-[#C8A24A] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all cursor-pointer disabled:opacity-55"
+                            >
+                              <option value="noorani-qaida" className="bg-[#05110E]">Noorani Qaida Basics</option>
+                              <option value="quran-reading" className="bg-[#05110E]">Quran Reading Fluency</option>
+                              <option value="tajweed" className="bg-[#05110E]">Advanced Tajweed Rules</option>
+                              <option value="memorization" className="bg-[#05110E]">Quran Memorization (Hifz)</option>
+                            </select>
+                          </div>
                         </div>
 
                         <button
