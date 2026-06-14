@@ -218,7 +218,7 @@ export default function App() {
       </main>
 
       {/* Layout Footer contacts */}
-      <Footer />
+      <Footer currentPage={currentPage} onNavigate={handleNavigation} />
 
       {/* Floating vibration WhatsApp trigger */}
       <WhatsAppButton />

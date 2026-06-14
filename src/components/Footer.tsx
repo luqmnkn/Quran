@@ -2,23 +2,40 @@ import React from 'react';
 import { Phone, Mail, Clock, MessageSquare, ArrowUpRight } from 'lucide-react';
 import Logo from './Logo';
 
-export default function Footer() {
+interface FooterProps {
+  currentPage?: 'home' | 'pricing' | 'blogs';
+  onNavigate?: (page: 'home' | 'pricing' | 'blogs', sectionId?: string) => void;
+}
+
+export default function Footer({ currentPage = 'home', onNavigate }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    const target = document.querySelector(id);
-    if (target) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = target.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
+    
+    let page: 'home' | 'pricing' | 'blogs' = 'home';
+    if (id === '#pricing') {
+      page = 'pricing';
+    } else if (id === '#blogs') {
+      page = 'blogs';
+    }
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+    if (onNavigate) {
+      onNavigate(page, id);
+    } else {
+      const target = document.querySelector(id);
+      if (target) {
+        const offset = 80;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = target.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     }
   };
 
@@ -61,6 +78,12 @@ export default function Footer() {
                 <a href="#courses" onClick={(e) => handleLinkClick(e, '#courses')} className="hover:text-white hover:underline transition-colors">Programs</a>
               </li>
               <li>
+                <a href="#pricing" onClick={(e) => handleLinkClick(e, '#pricing')} className="hover:text-white hover:underline transition-colors">Pricing Plans</a>
+              </li>
+              <li>
+                <a href="#blogs" onClick={(e) => handleLinkClick(e, '#blogs')} className="hover:text-white hover:underline transition-colors">Quranic Blogs</a>
+              </li>
+              <li>
                 <a href="#why-us" onClick={(e) => handleLinkClick(e, '#why-us')} className="hover:text-white hover:underline transition-colors">Why Learn Here</a>
               </li>
               <li>
@@ -77,19 +100,19 @@ export default function Footer() {
             <ul className="space-y-2.5 text-xs text-emerald-custom-100/75 font-medium">
               <li className="flex items-center space-x-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-custom-600 shrink-0"></span>
-                <span>Noorani Qaida Basics</span>
+                <a href="#courses" onClick={(e) => handleLinkClick(e, '#courses')} className="hover:text-white hover:underline transition-colors">Noorani Qaida Basics</a>
               </li>
               <li className="flex items-center space-x-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-custom-600 shrink-0"></span>
-                <span>Quran Recitation Reading</span>
+                <a href="#courses" onClick={(e) => handleLinkClick(e, '#courses')} className="hover:text-white hover:underline transition-colors">Quran Recitation Reading</a>
               </li>
               <li className="flex items-center space-x-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-custom-600 shrink-0"></span>
-                <span>Master Tajweed Rules</span>
+                <a href="#courses" onClick={(e) => handleLinkClick(e, '#courses')} className="hover:text-white hover:underline transition-colors">Master Tajweed Rules</a>
               </li>
               <li className="flex items-center space-x-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-custom-600 shrink-0"></span>
-                <span>Quran Memorization (Hifz)</span>
+                <a href="#courses" onClick={(e) => handleLinkClick(e, '#courses')} className="hover:text-white hover:underline transition-colors">Quran Memorization (Hifz)</a>
               </li>
             </ul>
           </div>
@@ -104,8 +127,8 @@ export default function Footer() {
                 <Phone size={14} className="text-gold-accent-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="text-[10px] block uppercase text-emerald-custom-100/40">WhatsApp Number</span>
-                  <a href="https://wa.me/13156364022" target="_blank" rel="noreferrer" className="text-white hover:text-gold-accent-400 font-semibold block mt-0.5">
-                    +1 (315) 636-4022
+                  <a href="https://wa.me/18186509752" target="_blank" rel="noreferrer" className="text-white hover:text-gold-accent-400 font-semibold block mt-0.5">
+                    +1 (818) 650-9752
                   </a>
                 </div>
               </li>
@@ -114,8 +137,8 @@ export default function Footer() {
                 <Mail size={14} className="text-gold-accent-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="text-[10px] block uppercase text-emerald-custom-100/40">Email Help desk</span>
-                  <a href="mailto:support@quranrise.com" className="text-white hover:text-gold-accent-400 font-semibold block mt-0.5">
-                    support@quranrise.com
+                  <a href="mailto:Contact@quranrise.com" className="text-white hover:text-gold-accent-400 font-semibold block mt-0.5">
+                    Contact@quranrise.com
                   </a>
                 </div>
               </li>

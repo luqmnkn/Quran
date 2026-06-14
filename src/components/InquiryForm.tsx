@@ -484,7 +484,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
               
               <div className="space-y-3">
                 <a 
-                  href="https://wa.me/13156364022" 
+                  href="https://wa.me/18186509752" 
                   target="_blank" 
                   rel="noreferrer" 
                   className="flex items-center space-x-4 p-4 bg-[#FAFAF8] rounded-2xl hover:bg-[#F2F2EC] border border-[#ECECE6] transition-all group"
@@ -494,12 +494,12 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                   </div>
                   <div>
                     <span className="text-[10px] font-mono font-bold uppercase text-gray-400 tracking-wider">Fast Coordinator WhatsApp</span>
-                    <p className="text-[#0A1A14] font-extrabold mt-0.5 text-sm">+1 (315) 636-4022</p>
+                    <p className="text-[#0A1A14] font-extrabold mt-0.5 text-sm">+1 (818) 650-9752</p>
                   </div>
                 </a>
 
                 <a 
-                  href="mailto:support@quranrise.com" 
+                  href="mailto:Contact@quranrise.com" 
                   className="flex items-center space-x-4 p-4 bg-[#FAFAF8] rounded-2xl hover:bg-[#F2F2EC] border border-[#ECECE6] transition-all group"
                 >
                   <div className="w-10 h-10 rounded-xl bg-[#8A6B20]/10 text-[#8A6B20] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
@@ -507,7 +507,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                   </div>
                   <div>
                     <span className="text-[10px] font-mono font-bold uppercase text-gray-400 tracking-wider">Direct Helpdesk Email</span>
-                    <p className="text-[#0A1A14] font-extrabold mt-0.5 text-sm">support@quranrise.com</p>
+                    <p className="text-[#0A1A14] font-extrabold mt-0.5 text-sm">Contact@quranrise.com</p>
                   </div>
                 </a>
               </div>

@@ -126,7 +126,7 @@ export const TESTIMONIALS: Testimonial[] = [
     id: 't3',
     name: 'Amina Al-Farsi',
     role: 'Parent',
-    feedback: 'QuranRise has transformed our homeschooling routine. My daughter is doing Quran Memorization (Hifz) with a qualified female tutor. The teacher utilizes highly engaging techniques, breaking verses down into memorable rhythmic blocks. The progress tracking dashboard keeps me informed weekly.',
+    feedback: 'QuranRise has transformed our homeschooling routine. My daughter is doing Quran Memorization (Hifz) with a qualified female tutor. The teacher utilizes highly engaging techniques, breaking verses down into memorable rhythmic blocks.',
     rating: 5,
     location: 'Toronto, Canada',
     avatarInitials: 'AF'
@@ -167,18 +167,13 @@ export const WHY_CHOOSE_US = [
     title: 'Affordable & High Quality',
     description: 'No hidden registration fees or long commitments. Transparent, competitive packages structured to keep online Quran studies accessible to everyone.',
     icon: 'CheckCircle'
-  },
-  {
-    title: 'Weekly Progress Reports',
-    description: 'Parents stay fully briefed with automated progress logs outlining verses memorized, points of improvement, and attendance metrics.',
-    icon: 'TrendingUp'
   }
 ];
 
 export const FAQS = [
   {
     question: 'How do the live classes work?',
-    answer: 'Classes are conducted live over secure, stable video platforms like Zoom, Google Meet, or Skype. It is a one-on-one virtual classroom containing only the student and the certified tutor. The teacher shares screens to trace lessons, speaks clearly, and observes correct articulation live.'
+    answer: 'Classes are conducted live over secure, stable video platforms like Zoom and Microsoft Teams. It is a one-on-one virtual classroom containing only the student and the certified tutor. The teacher shares screens to trace lessons, speaks clearly, and observes correct articulation live.'
   },
   {
     question: 'Are there separate female teachers for girls and female students?',

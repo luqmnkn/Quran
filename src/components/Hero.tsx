@@ -242,7 +242,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
               
               {/* Button 2: Chat on WhatsApp */}
               <a
-                href="https://wa.me/13156364022"
+                href="https://wa.me/18186509752"
                 target="_blank"
                 rel="noreferrer"
                 className="h-12 sm:h-14 w-full px-4 sm:px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#C8A24A]/30 text-[#E2C785] font-display font-bold text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center space-x-2 shrink-0 cursor-pointer"
