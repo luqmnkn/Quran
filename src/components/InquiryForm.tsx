@@ -86,7 +86,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
 
     try {
 
-          const apiUrl = "https://script.google.com/macros/s/AKfycbxy-K4qg-I0xEX-BWQH60CTqYPGTz5Xr1LLsuGfLFesraTdC7-5gjVtCmTBDdHCBocIdg/exec"
+          const apiUrl = "https://script.google.com/macros/s/AKfycbyAFvOGLKmUhG6m2mHG-b7HxucwVJR7ojPGY0ZhJm8nH7PYRmB1-5tR_Vp1LJnJ0lOR/exec"
       
       
       if (apiUrl) {
