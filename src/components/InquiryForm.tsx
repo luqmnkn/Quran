@@ -42,6 +42,10 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
       else if (prefilledCourse.toLowerCase().includes('reading') || prefilledCourse.toLowerCase().includes('recitation')) setCourseInterest('quran-reading');
       else if (prefilledCourse.toLowerCase().includes('tajweed')) setCourseInterest('tajweed');
       else if (prefilledCourse.toLowerCase().includes('memorization') || prefilledCourse.toLowerCase().includes('hifz')) setCourseInterest('memorization');
+      
+      if (prefilledCourse.toLowerCase().includes('plan')) {
+        setMessage(`As-salamu alaykum. I would like to book my free trial for ${prefilledCourse}. Please contact me to arrange dates.`);
+      }
     }
   }, [prefilledCourse]);
 

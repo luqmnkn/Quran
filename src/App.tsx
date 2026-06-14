@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import Pricing from './components/Pricing';
 import Services from './components/Services';
 import About from './components/About';
 import WhyChooseUs from './components/WhyChooseUs';
@@ -11,12 +12,14 @@ import FAQSection from './components/FAQSection';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
 import FloatingControls from './components/FloatingControls';
+import Blogs from './components/Blogs';
 import { X, Calendar, User, ShieldCheck } from 'lucide-react';
 
 export default function App() {
   const [isTrialModalOpen, setIsTrialModalOpen] = useState(false);
   const [selectedCourseSelection, setSelectedCourseSelection] = useState('');
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [currentPage, setCurrentPage] = useState<'home' | 'pricing' | 'blogs'>('home');
 
   // Scroll Progress Bar Tracker
   useEffect(() => {
@@ -30,20 +33,86 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Handle Page Navigation elegantly with optional scroll target anchors
+  const handleNavigation = (page: 'home' | 'pricing' | 'blogs', sectionId?: string) => {
+    if (page !== currentPage) {
+      setCurrentPage(page);
+      
+      // If switching page and a target anchor section is available
+      if (page === 'home' && sectionId && sectionId !== '#home') {
+        setTimeout(() => {
+          const target = document.querySelector(sectionId);
+          if (target) {
+            const headerOffset = 100;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }, 120);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'instant' as any });
+      }
+    } else {
+      // Already on requested page, scroll to specific section or smoothly to top
+      if (sectionId) {
+        const target = document.querySelector(sectionId);
+        if (target) {
+          const headerOffset = 100;
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  };
+
   // Handle Course Selection scrolling directly to form
   const handleCourseSelection = (courseName: string) => {
     setSelectedCourseSelection(courseName);
     
-    const targetElement = document.querySelector('#contact');
-    if (targetElement) {
-      const headerOffset = 80;
-      const elementPosition = targetElement.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+    // If on a different subpage, navigate back home first
+    if (currentPage !== 'home') {
+      setCurrentPage('home');
+      setTimeout(() => {
+        const targetElement = document.querySelector('#contact');
+        if (targetElement) {
+          const headerOffset = 80;
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 120);
+    } else {
+      const targetElement = document.querySelector('#contact');
+      if (targetElement) {
+        const headerOffset = 80;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     }
+  };
+
+  // Handle Pricing Plan selection
+  const handlePricingSelection = (planName: string, planDetails: string) => {
+    setSelectedCourseSelection(`${planName}: ${planDetails}`);
+    setIsTrialModalOpen(true);
   };
 
   // Submit trigger from Quick Inquiry Hero
@@ -58,42 +127,61 @@ export default function App() {
       
 
       {/* Header Sticky Component */}
-      <Header onOpenTrialModal={() => setIsTrialModalOpen(true)} />
+      <Header 
+        onOpenTrialModal={() => setIsTrialModalOpen(true)} 
+        currentPage={currentPage}
+        onNavigate={handleNavigation}
+      />
 
-      {/* Main Content Sections */}
+      {/* Main Content Sections with elegant conditional router */}
       <main>
-        {/* Hero Section */}
-        <Hero
-          onOpenTrialModal={() => setIsTrialModalOpen(true)}
-          onSubmitInquiry={handleLeadSubmitInHero}
-        />
+        {currentPage === 'home' && (
+          <>
+            {/* Hero Section */}
+            <Hero
+              onOpenTrialModal={() => setIsTrialModalOpen(true)}
+              onSubmitInquiry={handleLeadSubmitInHero}
+            />
 
-        {/* Services / Syllabus Showcase */}
-        <Services
-          onSelectCourse={handleCourseSelection}
-          onOpenTrialModal={() => setIsTrialModalOpen(true)}
-        />
+            {/* Services / Syllabus Showcase */}
+            <Services
+              onSelectCourse={handleCourseSelection}
+              onOpenTrialModal={() => setIsTrialModalOpen(true)}
+            />
 
-        {/* About Academy & 3-Step Start Component */}
-        <About onOpenTrialModal={() => setIsTrialModalOpen(true)} />
+            {/* About Academy & 3-Step Start Component */}
+            <About onOpenTrialModal={() => setIsTrialModalOpen(true)} />
 
-        {/* Why Choose Us features grid */}
-        <WhyChooseUs />
+            {/* Why Choose Us features grid */}
+            <WhyChooseUs />
 
-        {/* Trust Credibility Stat meters */}
-        <TrustCredibility />
+            {/* Trust Credibility Stat meters */}
+            <TrustCredibility />
 
-        {/* Real student reviews & testimonials filter */}
-        <Testimonials />
+            {/* Real student reviews & testimonials filter */}
+            <Testimonials />
 
-        {/* Primary Lead Generation Enrollment Form */}
-        <InquiryForm
-          prefilledCourse={selectedCourseSelection}
-          onClearPrefill={() => setSelectedCourseSelection('')}
-        />
+            {/* Primary Lead Generation Enrollment Form */}
+            <InquiryForm
+              prefilledCourse={selectedCourseSelection}
+              onClearPrefill={() => setSelectedCourseSelection('')}
+            />
 
-        {/* FAQ Accordion Section */}
-        <FAQSection />
+            {/* FAQ Accordion Section */}
+            <FAQSection />
+          </>
+        )}
+
+        {currentPage === 'pricing' && (
+          <Pricing onBookTrial={handlePricingSelection} />
+        )}
+
+        {currentPage === 'blogs' && (
+          <Blogs 
+            onNavigateHome={() => handleNavigation('home')}
+            onOpenTrialModal={() => setIsTrialModalOpen(true)}
+          />
+        )}
       </main>
 
       {/* Layout Footer contacts */}

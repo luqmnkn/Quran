@@ -4,9 +4,11 @@ import Logo from './Logo';
 
 interface HeaderProps {
   onOpenTrialModal: () => void;
+  currentPage: 'home' | 'pricing' | 'blogs';
+  onNavigate: (page: 'home' | 'pricing' | 'blogs', sectionId?: string) => void;
 }
 
-export default function Header({ onOpenTrialModal }: HeaderProps) {
+export default function Header({ onOpenTrialModal, currentPage, onNavigate }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -18,24 +20,15 @@ export default function Header({ onOpenTrialModal }: HeaderProps) {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Courses', href: '#courses' },
-    { name: 'Blogs', href: '#blogs' }
+    { name: 'Home', page: 'home' as const, href: '#home' },
+    { name: 'Pricing', page: 'pricing' as const, href: '#pricing' },
+    { name: 'Courses', page: 'home' as const, href: '#courses' },
+    { name: 'Blogs', page: 'blogs' as const, href: '#blogs' }
   ];
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, page: 'home' | 'pricing' | 'blogs', href: string) => {
     e.preventDefault();
-    const targetElement = document.querySelector(href);
-    if (targetElement) {
-      const headerOffset = 100;
-      const elementPosition = targetElement.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
+    onNavigate(page, href);
   };
 
   return (
@@ -54,7 +47,7 @@ export default function Header({ onOpenTrialModal }: HeaderProps) {
         {/* Logo permanently on the left side of the navbar */}
         <a
           href="#home"
-          onClick={(e) => handleLinkClick(e, '#home')}
+          onClick={(e) => handleLinkClick(e, 'home', '#home')}
           className="flex items-center shrink-0"
         >
           <Logo isDarkBg={false} className="h-5 sm:h-7" />
@@ -62,16 +55,18 @@ export default function Header({ onOpenTrialModal }: HeaderProps) {
 
         {/* Minimal Links on the right of the logo */}
         <nav className="flex items-center space-x-4 sm:space-x-6">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={(e) => handleLinkClick(e, link.href)}
-              className="font-display font-black text-[10px] uppercase sm:text-xs tracking-widest text-[#4E625A] hover:text-[#C8A24A] transition-colors duration-200"
-            >
-              {link.name}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            return (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={(e) => handleLinkClick(e, link.page, link.href)}
+                className="font-display font-black text-[10px] uppercase sm:text-xs tracking-widest text-[#4E625A] hover:text-[#C8A24A] transition-colors duration-200 relative"
+              >
+                {link.name}
+              </a>
+            );
+          })}
         </nav>
       </div>
     </div>
