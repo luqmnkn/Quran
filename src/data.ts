@@ -145,7 +145,7 @@ export const TESTIMONIALS: Testimonial[] = [
 export const WHY_CHOOSE_US = [
   {
     title: 'Certified Expert Tutors',
-    description: 'Learn from highly qualified, certified educators who have graduated from prestigious Islamic institutions and hold authorized chains of recitation (Ijazah).',
+    description: 'Learn from highly qualified, certified educators who have graduated from prestigious Islamic institutions and hold verified academic credentials.',
     icon: 'ShieldCheck'
   },
   {
@@ -206,5 +206,5 @@ export const TRUST_STATS: TrustStat[] = [
   { value: '15+', label: 'Years Experience', description: 'Delivering exceptional Islamic and Qur’anic teaching to international students.' },
   { value: '25,000+', label: 'Classes Completed', description: 'Successful live one-on-one sessions taught by our top-ranking certified tutors.' },
   { value: '98%', label: 'Student Satisfaction', description: 'Loved and recommended by international parents, children, and adult scholars.' },
-  { value: '100%', label: 'Certified Educators', description: 'Instructors holding legitimate general degrees, Hifz certificates, and verified Ijazah.' }
+  { value: '100%', label: 'Certified Educators', description: 'Instructors holding legitimate general degrees, Hifz certificates, and verified academic credentials.' }
 ];

@@ -35,6 +35,8 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
     return code + cleanedNum;
   };
 
+  const isPlanPrefilled = isModalMode && !!(prefilledCourse && prefilledCourse.toLowerCase().includes('plan'));
+
   // Sync Prefill Course Changes
   useEffect(() => {
     if (prefilledCourse) {
@@ -44,10 +46,12 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
       else if (prefilledCourse.toLowerCase().includes('memorization') || prefilledCourse.toLowerCase().includes('hifz')) setCourseInterest('memorization');
       
       if (prefilledCourse.toLowerCase().includes('plan')) {
-        setMessage(`As-salamu alaykum. I would like to book my free trial for ${prefilledCourse}. Please contact me to arrange dates.`);
+        if (isModalMode) {
+          setMessage(`Selected Pricing Plan: ${prefilledCourse}. I would like to book my free 3-day trial slots for this plan.`);
+        }
       }
     }
-  }, [prefilledCourse]);
+  }, [prefilledCourse, isModalMode]);
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
@@ -274,15 +278,11 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                       onChange={(e) => setCountryCode(e.target.value)}
                       className="bg-transparent text-xs text-[#0A1A14] py-3 pl-3 pr-1 outline-none border-r border-[#ECECE6]/80 cursor-pointer min-w-[75px]"
                     >
-                      <option value="+1">🇺🇸 +1</option>
-                      <option value="+44">🇬🇧 +44</option>
-                      <option value="+61">🇦🇺 +61</option>
-                      <option value="+966">🇸🇦 +966</option>
-                      <option value="+971">🇦🇪 +971</option>
-                      <option value="+974">🇶🇦 +974</option>
-                      <option value="+92">🇵🇰 +92</option>
-                      <option value="+91">🇮🇳 +91</option>
-                      <option value="">Other</option>
+                      {ALL_COUNTRIES.map((c) => (
+                        <option key={`${c.code}-mcode`} value={c.dial}>
+                          {c.flag} {c.dial}
+                        </option>
+                      ))}
                     </select>
                     <input
                       type="tel"
@@ -314,14 +314,11 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                     onChange={(e) => setCountry(e.target.value)}
                     className="w-full bg-[#FAFAF8] border border-[#ECECE6] focus:border-[#C8A24A] rounded-xl px-4 py-3 text-xs text-[#0A1A14] outline-none transition-all cursor-pointer"
                   >
-                    <option value="United States">United States</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                    <option value="Saudi Arabia">Saudi Arabia</option>
-                    <option value="United Arab Emirates">UAE</option>
-                    <option value="Qatar">Qatar</option>
-                    <option value="Other">Other Country</option>
+                    {ALL_COUNTRIES.map((c) => (
+                      <option key={`${c.code}-mres`} value={c.name}>
+                        {c.flag} {c.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -354,10 +351,20 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                     setMessage(e.target.value);
                     if (errors.message) delete errors.message;
                   }}
-                  className={`w-full bg-[#FAFAF8] border ${
+                  readOnly={isPlanPrefilled}
+                  className={`w-full border rounded-xl px-4 py-2.5 text-sm outline-none transition-all resize-none placeholder-gray-400 ${
+                    isPlanPrefilled
+                      ? 'bg-[#F4F4F1] text-gray-500 border-[#D2D2CA] cursor-not-allowed font-medium select-none shadow-inner'
+                      : 'bg-[#FAFAF8] text-[#0A1A14]'
+                  } ${
                     errors.message ? 'border-red-500' : 'border-[#ECECE6] focus:border-[#C8A24A]'
-                  } rounded-xl px-4 py-2.5 text-sm text-[#0A1A14] outline-none transition-all resize-none placeholder-gray-400`}
+                  }`}
                 ></textarea>
+                {isPlanPrefilled && (
+                  <span className="text-[10px] text-[#8A6B20] font-bold uppercase tracking-wider block mt-1 flex items-center">
+                    🔒 Selected Pricing Plan is locked
+                  </span>
+                )}
                 {errors.message && (
                   <p className="text-xs text-red-500 mt-1 flex items-center space-x-1 font-semibold">
                     <AlertCircle size={12} />
@@ -445,7 +452,7 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                   </span>
                   <div>
                     <strong className="text-white font-[800] text-sm block">Certified 3-Day Assessment</strong>
-                    <p className="text-[#89A296] text-xs mt-1 leading-relaxed">Connect directly with a friendly, certified native Arab tutor to map spelling and recitation levels.</p>
+                    <p className="text-[#89A296] text-xs mt-1 leading-relaxed">Connect directly with a friendly, highly qualified, certified tutor to map spelling and recitation levels.</p>
                   </div>
                 </div>
 
@@ -630,15 +637,11 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                           onChange={(e) => setCountryCode(e.target.value)}
                           className="bg-transparent text-xs text-[#0A1A14] py-3.5 pl-3 pr-1 outline-none border-r border-[#ECECE6]/80 cursor-pointer min-w-[75px]"
                         >
-                          <option value="+1">🇺🇸 +1</option>
-                          <option value="+44">🇬🇧 +44</option>
-                          <option value="+61">🇦🇺 +61</option>
-                          <option value="+966">🇸🇦 +966</option>
-                          <option value="+971">🇦🇪 +971</option>
-                          <option value="+974">🇶🇦 +974</option>
-                          <option value="+92">🇵🇰 +92</option>
-                          <option value="+91">🇮🇳 +91</option>
-                          <option value="">Other</option>
+                          {ALL_COUNTRIES.map((c) => (
+                            <option key={`${c.code}-mcode-main`} value={c.dial}>
+                              {c.flag} {c.dial}
+                            </option>
+                          ))}
                         </select>
                         <input
                           type="tel"
@@ -672,14 +675,11 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                         onChange={(e) => setCountry(e.target.value)}
                         className="w-full bg-[#FAFAF8] border border-[#ECECE6] focus:border-[#C8A24A] rounded-xl px-4 py-3.5 text-sm text-[#0A1A14] outline-none transition-all cursor-pointer"
                       >
-                        <option value="United States">United States (USA)</option>
-                        <option value="United Kingdom">United Kingdom (UK)</option>
-                        <option value="Canada">Canada</option>
-                        <option value="Australia">Australia</option>
-                        <option value="Saudi Arabia">Saudi Arabia</option>
-                        <option value="United Arab Emirates">UAE (Dubai, Sharjah)</option>
-                        <option value="Qatar">Qatar</option>
-                        <option value="Other">Other Country</option>
+                        {ALL_COUNTRIES.map((c) => (
+                          <option key={`${c.code}-mres-main`} value={c.name}>
+                            {c.flag} {c.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
@@ -714,10 +714,20 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
                         setMessage(e.target.value);
                         if (errors.message) delete errors.message;
                       }}
-                      className={`w-full bg-[#FAFAF8] border ${
+                      readOnly={isPlanPrefilled}
+                      className={`w-full border rounded-xl px-4 py-3.5 text-sm outline-none transition-all resize-none placeholder-gray-400 ${
+                        isPlanPrefilled
+                          ? 'bg-[#F4F4F1] text-gray-500 border-[#D2D2CA] cursor-not-allowed font-medium select-none shadow-inner'
+                          : 'bg-[#FAFAF8] text-[#0A1A14]'
+                      } ${
                         errors.message ? 'border-red-500' : 'border-[#ECECE6] focus:border-[#C8A24A]'
-                      } rounded-xl px-4 py-3.5 text-sm text-[#0A1A14] outline-none transition-all resize-none placeholder-gray-400`}
+                      }`}
                     ></textarea>
+                    {isPlanPrefilled && (
+                      <span className="text-[11px] text-[#8A6B20] font-bold uppercase tracking-wider block mt-2 flex items-center">
+                        🔒 Selected Pricing Plan is locked
+                      </span>
+                    )}
                     {errors.message && (
                       <p className="text-xs text-red-500 mt-2 flex items-center space-x-1 font-semibold">
                         <AlertCircle size={13} />
@@ -762,3 +772,137 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
     </section>
   );
 }
+
+const ALL_COUNTRIES = [
+  { code: 'AF', name: 'Afghanistan', dial: '+93', flag: '🇦🇫' },
+  { code: 'AL', name: 'Albania', dial: '+355', flag: '🇦🇱' },
+  { code: 'DZ', name: 'Algeria', dial: '+213', flag: '🇩🇿' },
+  { code: 'AD', name: 'Andorra', dial: '+376', flag: '🇦🇩' },
+  { code: 'AO', name: 'Angola', dial: '+244', flag: '🇦🇴' },
+  { code: 'AR', name: 'Argentina', dial: '+54', flag: '🇦🇷' },
+  { code: 'AM', name: 'Armenia', dial: '+374', flag: '🇦🇲' },
+  { code: 'AU', name: 'Australia', dial: '+61', flag: '🇦🇺' },
+  { code: 'AT', name: 'Austria', dial: '+43', flag: '🇦🇹' },
+  { code: 'AZ', name: 'Azerbaijan', dial: '+994', flag: '🇦🇿' },
+  { code: 'BH', name: 'Bahrain', dial: '+973', flag: '🇧🇭' },
+  { code: 'BD', name: 'Bangladesh', dial: '+880', flag: '🇧🇩' },
+  { code: 'BY', name: 'Belarus', dial: '+375', flag: '🇧🇾' },
+  { code: 'BE', name: 'Belgium', dial: '+32', flag: '🇧🇪' },
+  { code: 'BO', name: 'Bolivia', dial: '+591', flag: '🇧🇴' },
+  { code: 'BA', name: 'Bosnia and Herzegovina', dial: '+387', flag: '🇧🇦' },
+  { code: 'BR', name: 'Brazil', dial: '+55', flag: '🇧🇷' },
+  { code: 'BN', name: 'Brunei', dial: '+673', flag: '🇧🇳' },
+  { code: 'BG', name: 'Bulgaria', dial: '+359', flag: '🇧🇬' },
+  { code: 'KH', name: 'Cambodia', dial: '+855', flag: '🇰🇭' },
+  { code: 'CM', name: 'Cameroon', dial: '+237', flag: '🇨🇲' },
+  { code: 'CA', name: 'Canada', dial: '+1', flag: '🇨🇦' },
+  { code: 'CL', name: 'Chile', dial: '+56', flag: '🇨🇱' },
+  { code: 'CN', name: 'China', dial: '+86', flag: '🇨🇳' },
+  { code: 'CO', name: 'Colombia', dial: '+57', flag: '🇨🇴' },
+  { code: 'CR', name: 'Costa Rica', dial: '+506', flag: '🇨🇷' },
+  { code: 'HR', name: 'Croatia', dial: '+385', flag: '🇭🇷' },
+  { code: 'CU', name: 'Cuba', dial: '+53', flag: '🇨🇺' },
+  { code: 'CY', name: 'Cyprus', dial: '+357', flag: '🇨🇾' },
+  { code: 'CZ', name: 'Czech Republic', dial: '+420', flag: '🇨🇿' },
+  { code: 'DK', name: 'Denmark', dial: '+45', flag: '🇩🇰' },
+  { code: 'DJ', name: 'Djibouti', dial: '+253', flag: '🇩🇯' },
+  { code: 'EC', name: 'Ecuador', dial: '+593', flag: '🇪🇨' },
+  { code: 'EG', name: 'Egypt', dial: '+20', flag: '🇪🇬' },
+  { code: 'SV', name: 'El Salvador', dial: '+503', flag: '🇸🇻' },
+  { code: 'EE', name: 'Estonia', dial: '+372', flag: '🇪🇪' },
+  { code: 'ET', name: 'Ethiopia', dial: '+251', flag: '🇪🇹' },
+  { code: 'FJ', name: 'Fiji', dial: '+679', flag: '🇫🇯' },
+  { code: 'FI', name: 'Finland', dial: '+358', flag: '🇫🇮' },
+  { code: 'FR', name: 'France', dial: '+33', flag: '🇫🇷' },
+  { code: 'GE', name: 'Georgia', dial: '+995', flag: '🇬🇪' },
+  { code: 'DE', name: 'Germany', dial: '+49', flag: '🇩🇪' },
+  { code: 'GH', name: 'Ghana', dial: '+233', flag: '🇬🇭' },
+  { code: 'GR', name: 'Greece', dial: '+30', flag: '🇬🇷' },
+  { code: 'GT', name: 'Guatemala', dial: '+502', flag: '🇬🇹' },
+  { code: 'GY', name: 'Guyana', dial: '+592', flag: '🇬🇾' },
+  { code: 'HK', name: 'Hong Kong', dial: '+852', flag: '🇭🇰' },
+  { code: 'HU', name: 'Hungary', dial: '+36', flag: '🇭🇺' },
+  { code: 'IS', name: 'Iceland', dial: '+354', flag: '🇮🇸' },
+  { code: 'IN', name: 'India', dial: '+91', flag: '🇮🇳' },
+  { code: 'ID', name: 'Indonesia', dial: '+62', flag: '🇮🇩' },
+  { code: 'IR', name: 'Iran', dial: '+98', flag: '🇮🇷' },
+  { code: 'IQ', name: 'Iraq', dial: '+964', flag: '🇮🇶' },
+  { code: 'IE', name: 'Ireland', dial: '+353', flag: '🇮🇪' },
+  { code: 'IL', name: 'Israel', dial: '+972', flag: '🇮🇱' },
+  { code: 'IT', name: 'Italy', dial: '+39', flag: '🇮🇹' },
+  { code: 'JM', name: 'Jamaica', dial: '+1876', flag: '🇯🇲' },
+  { code: 'JP', name: 'Japan', dial: '+81', flag: '🇯🇵' },
+  { code: 'JO', name: 'Jordan', dial: '+962', flag: '🇯🇴' },
+  { code: 'KZ', name: 'Kazakhstan', dial: '+7', flag: '🇰🇿' },
+  { code: 'KE', name: 'Kenya', dial: '+254', flag: '🇰🇪' },
+  { code: 'KW', name: 'Kuwait', dial: '+965', flag: '🇰🇼' },
+  { code: 'KG', name: 'Kyrgyzstan', dial: '+996', flag: '🇰🇬' },
+  { code: 'LA', name: 'Laos', dial: '+856', flag: '🇱🇦' },
+  { code: 'LV', name: 'Latvia', dial: '+371', flag: '🇱🇻' },
+  { code: 'LB', name: 'Lebanon', dial: '+961', flag: '🇱🇧' },
+  { code: 'LY', name: 'Libya', dial: '+218', flag: '🇱🇾' },
+  { code: 'LT', name: 'Lithuania', dial: '+370', flag: '🇱🇹' },
+  { code: 'LU', name: 'Luxembourg', dial: '+352', flag: '🇱🇺' },
+  { code: 'MK', name: 'Macedonia', dial: '+389', flag: '🇲🇰' },
+  { code: 'MY', name: 'Malaysia', dial: '+60', flag: '🇲🇾' },
+  { code: 'MV', name: 'Maldives', dial: '+960', flag: '🇲🇻' },
+  { code: 'MT', name: 'Malta', dial: '+356', flag: '🇲🇹' },
+  { code: 'MR', name: 'Mauritania', dial: '+222', flag: '🇲🇷' },
+  { code: 'MU', name: 'Mauritius', dial: '+230', flag: '🇲🇺' },
+  { code: 'MX', name: 'Mexico', dial: '+52', flag: '🇲🇽' },
+  { code: 'MD', name: 'Moldova', dial: '+373', flag: '🇲🇩' },
+  { code: 'ME', name: 'Montenegro', dial: '+382', flag: '🇲🇪' },
+  { code: 'MA', name: 'Morocco', dial: '+212', flag: '🇲🇦' },
+  { code: 'MZ', name: 'Mozambique', dial: '+258', flag: '🇲🇿' },
+  { code: 'MM', name: 'Myanmar', dial: '+95', flag: '🇲🇲' },
+  { code: 'NP', name: 'Nepal', dial: '+977', flag: '🇳🇵' },
+  { code: 'NL', name: 'Netherlands', dial: '+31', flag: '🇳🇱' },
+  { code: 'NZ', name: 'New Zealand', dial: '+64', flag: '🇳🇿' },
+  { code: 'NG', name: 'Nigeria', dial: '+234', flag: '🇳🇬' },
+  { code: 'NO', name: 'Norway', dial: '+47', flag: '🇳🇴' },
+  { code: 'OM', name: 'Oman', dial: '+968', flag: '🇴🇲' },
+  { code: 'PK', name: 'Pakistan', dial: '+92', flag: '🇵🇰' },
+  { code: 'PS', name: 'Palestine', dial: '+970', flag: '🇵🇸' },
+  { code: 'PA', name: 'Panama', dial: '+507', flag: '🇵🇦' },
+  { code: 'PY', name: 'Paraguay', dial: '+595', flag: '🇵🇾' },
+  { code: 'PE', name: 'Peru', dial: '+51', flag: '🇵🇪' },
+  { code: 'PH', name: 'Philippines', dial: '+63', flag: '🇵🇭' },
+  { code: 'PL', name: 'Poland', dial: '+48', flag: '🇵🇱' },
+  { code: 'PT', name: 'Portugal', dial: '+351', flag: '🇵🇹' },
+  { code: 'QA', name: 'Qatar', dial: '+974', flag: '🇶🇦' },
+  { code: 'RO', name: 'Romania', dial: '+40', flag: '🇷🇴' },
+  { code: 'RU', name: 'Russia', dial: '+7', flag: '🇷🇺' },
+  { code: 'RW', name: 'Rwanda', dial: '+250', flag: '🇷🇼' },
+  { code: 'SA', name: 'Saudi Arabia', dial: '+966', flag: '🇸🇦' },
+  { code: 'SN', name: 'Senegal', dial: '+221', flag: '🇸🇳' },
+  { code: 'RS', name: 'Serbia', dial: '+381', flag: '🇷🇸' },
+  { code: 'SG', name: 'Singapore', dial: '+65', flag: '🇸🇬' },
+  { code: 'SK', name: 'Slovakia', dial: '+421', flag: '🇸🇰' },
+  { code: 'SI', name: 'Slovenia', dial: '+386', flag: '🇸🇮' },
+  { code: 'SO', name: 'Somalia', dial: '+252', flag: '🇸🇴' },
+  { code: 'ZA', name: 'South Africa', dial: '+27', flag: '🇿🇦' },
+  { code: 'KR', name: 'South Korea', dial: '+82', flag: '🇰🇷' },
+  { code: 'ES', name: 'Spain', dial: '+34', flag: '🇪🇸' },
+  { code: 'LK', name: 'Sri Lanka', dial: '+94', flag: '🇱🇰' },
+  { code: 'SD', name: 'Sudan', dial: '+249', flag: '🇸🇩' },
+  { code: 'SE', name: 'Sweden', dial: '+46', flag: '🇸🇪' },
+  { code: 'CH', name: 'Switzerland', dial: '+41', flag: '🇨🇭' },
+  { code: 'SY', name: 'Syria', dial: '+963', flag: '🇸🇾' },
+  { code: 'TW', name: 'Taiwan', dial: '+886', flag: '🇹🇼' },
+  { code: 'TZ', name: 'Tanzania', dial: '+255', flag: '🇹🇿' },
+  { code: 'TH', name: 'Thailand', dial: '+66', flag: '🇹🇭' },
+  { code: 'TN', name: 'Tunisia', dial: '+216', flag: '🇹🇳' },
+  { code: 'TR', name: 'Turkey', dial: '+90', flag: '🇹🇷' },
+  { code: 'UG', name: 'Uganda', dial: '+256', flag: '🇺🇬' },
+  { code: 'UA', name: 'Ukraine', dial: '+380', flag: '🇺🇦' },
+  { code: 'AE', name: 'United Arab Emirates', dial: '+971', flag: '🇦🇪' },
+  { code: 'GB', name: 'United Kingdom', dial: '+44', flag: '🇬🇧' },
+  { code: 'US', name: 'United States', dial: '+1', flag: '🇺🇸' },
+  { code: 'UY', name: 'Uruguay', dial: '+598', flag: '🇺🇾' },
+  { code: 'UZ', name: 'Uzbekistan', dial: '+998', flag: '🇺🇿' },
+  { code: 'VE', name: 'Venezuela', dial: '+58', flag: '🇻🇪' },
+  { code: 'VN', name: 'Vietnam', dial: '+84', flag: '🇻🇳' },
+  { code: 'YE', name: 'Yemen', dial: '+967', flag: '🇾🇪' },
+  { code: 'ZM', name: 'Zambia', dial: '+260', flag: '🇿🇲' },
+  { code: 'ZW', name: 'Zimbabwe', dial: '+263', flag: '🇿🇼' }
+];

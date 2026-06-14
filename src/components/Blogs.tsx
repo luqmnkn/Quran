@@ -178,7 +178,7 @@ export default function Blogs({ onNavigateHome, onOpenTrialModal }: BlogsProps) 
                 Experience the 1-on-1 Advantage For Free
               </h2>
               <p className="text-xs sm:text-sm text-[#A6C0B5] leading-relaxed">
-                Apply Tajweed principles live with an expert native Arab Sheikh. Access 3 assessment sessions with no strings attached.
+                Apply Tajweed principles live with an expert certified instructor. Access 3 assessment sessions with no strings attached.
               </p>
             </div>
             

@@ -25,7 +25,7 @@ export default function TrustCredibility() {
             An International Academy Built on Trust & Devotion
           </h2>
           <p className="text-sm sm:text-base text-[#89A296] max-w-lg mx-auto leading-relaxed">
-            We hold ourselves to the highest benchmarks of traditional Arabic pedagogy and certified Ijazah chains.
+            We hold ourselves to the highest benchmarks of traditional Arabic pedagogy and verified academic certifications.
           </p>
         </div>
 
@@ -67,8 +67,8 @@ export default function TrustCredibility() {
             <CheckCircle2 size={24} />
           </div>
           <div className="text-xs sm:text-sm text-[#89A296] leading-relaxed">
-            <strong className="text-white block font-extrabold text-[#D8BB72] mb-1 font-display">100% Authorized Ijazah Recitation Chains</strong>
-            All our senior tutors hold certified chains of narration tracing back directly to classical scholars. Your family receives authentic, beautifully articulated preservation classes.
+            <strong className="text-white block font-extrabold text-[#D8BB72] mb-1 font-display">100% Certified Recitation Credentials</strong>
+            All our senior tutors hold certified credentials and authorizations from respected institutions. Your family receives authentic, beautifully articulated preservation classes.
           </div>
         </motion.div>
 

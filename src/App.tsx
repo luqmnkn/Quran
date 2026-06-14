@@ -20,21 +20,53 @@ export default function App() {
   const [selectedCourseSelection, setSelectedCourseSelection] = useState('');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentPage, setCurrentPage] = useState<'home' | 'pricing' | 'blogs'>('home');
+  const [activeSection, setActiveSection] = useState<'home' | 'pricing' | 'courses' | 'blogs'>('home');
 
-  // Scroll Progress Bar Tracker
+  // Sync activeSection on page changes
+  useEffect(() => {
+    if (currentPage !== 'home') {
+      setActiveSection(currentPage);
+    }
+  }, [currentPage]);
+
+  // Scroll Progress Bar Tracker & ScrollSpy
   useEffect(() => {
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
       if (totalScroll > 0) {
         setScrollProgress((window.scrollY / totalScroll) * 100);
       }
+
+      if (currentPage === 'home') {
+        const coursesElement = document.getElementById('courses');
+        if (coursesElement) {
+          const rect = coursesElement.getBoundingClientRect();
+          // If courses section is in view
+          if (rect.top <= window.innerHeight * 0.35 && rect.bottom >= window.innerHeight * 0.15) {
+            setActiveSection('courses');
+            return;
+          }
+        }
+        setActiveSection('home');
+      }
     };
     window.addEventListener('scroll', handleScroll);
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [currentPage]);
 
   // Handle Page Navigation elegantly with optional scroll target anchors
   const handleNavigation = (page: 'home' | 'pricing' | 'blogs', sectionId?: string) => {
+    if (page === 'pricing') {
+      setActiveSection('pricing');
+    } else if (page === 'blogs') {
+      setActiveSection('blogs');
+    } else if (sectionId === '#courses') {
+      setActiveSection('courses');
+    } else {
+      setActiveSection('home');
+    }
+
     if (page !== currentPage) {
       setCurrentPage(page);
       
@@ -130,6 +162,7 @@ export default function App() {
       <Header 
         onOpenTrialModal={() => setIsTrialModalOpen(true)} 
         currentPage={currentPage}
+        activeSection={activeSection}
         onNavigate={handleNavigation}
       />
 

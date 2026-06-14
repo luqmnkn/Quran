@@ -7,7 +7,7 @@ interface PricingProps {
 }
 
 export default function Pricing({ onBookTrial }: PricingProps) {
-  const [region, setRegion] = useState<'USA' | 'UK' | 'CANADA' | 'AUSTRALIA'>('USA');
+  const [region, setRegion] = useState<'USA' | 'UK' | 'CANADA' | 'AUSTRALIA' | 'EUROPE'>('USA');
 
   const getPriceInfo = (price: number) => {
     switch (region) {
@@ -17,6 +17,8 @@ export default function Pricing({ onBookTrial }: PricingProps) {
         return { symbol: 'C$', value: Math.round(price * 1.4) };
       case 'AUSTRALIA':
         return { symbol: 'A$', value: Math.round(price * 1.5) };
+      case 'EUROPE':
+        return { symbol: '€', value: Math.round(price * 0.9) };
       case 'USA':
       default:
         return { symbol: '$', value: price };
@@ -198,27 +200,27 @@ export default function Pricing({ onBookTrial }: PricingProps) {
         </div>
 
         {/* Region Switcher Buttons */}
-        <div className="flex flex-wrap justify-center gap-3.5 mb-14 max-w-3xl mx-auto relative z-10 px-4">
+        <div className="grid grid-cols-6 gap-3 mb-14 max-w-2xl mx-auto relative z-10 px-4 md:flex md:flex-wrap md:justify-center md:gap-3.5">
           {[
-            { id: 'USA', flag: '🇺🇸', label: 'USA', currency: 'USD' },
-            { id: 'UK', flag: '🇬🇧', label: 'UK', currency: 'GBP' },
-            { id: 'CANADA', flag: '🇨🇦', label: 'Canada', currency: 'CAD' },
-            { id: 'AUSTRALIA', flag: '🇦🇺', label: 'Australia', currency: 'AUD' }
-          ].map((r) => {
+            { id: 'USA', label: 'USA' },
+            { id: 'UK', label: 'UK' },
+            { id: 'CANADA', label: 'Canada' },
+            { id: 'AUSTRALIA', label: 'Australia' },
+            { id: 'EUROPE', label: 'Europe' }
+          ].map((r, index) => {
             const isActive = region === r.id;
+            const gridSpan = index < 2 ? 'col-span-3' : 'col-span-2';
             return (
               <button
                 key={r.id}
                 onClick={() => setRegion(r.id as any)}
-                className={`px-5 py-3 rounded-2xl font-display font-black text-xs uppercase tracking-widest transition-all duration-300 cursor-pointer flex items-center space-x-2 border shrink-0 ${
+                className={`${gridSpan} md:col-auto w-full md:w-auto px-4 py-3 rounded-2xl font-display font-black text-[11px] xs:text-xs uppercase tracking-widest transition-all duration-300 cursor-pointer flex items-center justify-center border text-center ${
                   isActive
                     ? 'bg-[#0A1A14] text-[#C8A24A] border-[#C8A24A] shadow-[0_12px_28px_rgba(200,162,74,0.18)] scale-[1.03]'
                     : 'bg-[#FAFAF8] text-[#4E625A] border-[#ECECE6] hover:border-[#C8A24A]/40 hover:bg-white hover:scale-[1.01]'
                 }`}
               >
-                <span className="text-sm">{r.flag}</span>
                 <span>{r.label}</span>
-                <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${isActive ? 'bg-white/10 text-[#D8BB72]' : 'bg-gray-200/65 text-gray-500'}`}>{r.currency}</span>
               </button>
             );
           })}

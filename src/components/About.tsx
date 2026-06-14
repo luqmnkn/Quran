@@ -19,7 +19,7 @@ export default function About({ onOpenTrialModal }: AboutProps) {
     {
       num: '02',
       title: 'Meet Your Tutor',
-      desc: 'Connect live with a certified native Arab tutor. We assess the learner\'s levels and suggest a customized curriculum path.',
+      desc: 'Connect live with a certified expert tutor. We assess the learner\'s levels and suggest a customized curriculum path.',
       icon: 'UserCheck'
     },
     {
@@ -128,7 +128,7 @@ export default function About({ onOpenTrialModal }: AboutProps) {
             </h2>
 
             <p className="font-sans font-medium text-[18px] text-[#4E625A] leading-relaxed">
-              At <strong>QuranRise</strong>, we establish a warm, encouraging environment connecting families globally with highly certified, authorized Native Arab educators from the comfort of home.
+              At <strong>QuranRise</strong>, we establish a warm, encouraging environment connecting families globally with highly certified, authorized expert educators from the comfort of home.
             </p>
 
             <p className="font-sans font-medium text-[16px] text-[#4E625A] leading-relaxed">

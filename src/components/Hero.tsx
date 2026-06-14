@@ -251,7 +251,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                 <span>Chat on WhatsApp</span>
               </a>
 
-              {/* Button 3: Certified Ijazah */}
+              {/* Button 3: Certified Credentials */}
               <div className="hidden sm:flex items-center space-x-3 bg-white/[0.03] border border-white/5 hover:border-[#C8A24A]/25 hover:bg-white/[0.05] p-3 rounded-xl transition-all duration-300">
                 <div className="w-8 h-8 rounded-lg bg-[#C8A24A]/10 flex items-center justify-center text-[#D8BB72] shrink-0">
                   <Award size={16} />
@@ -400,7 +400,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                           Hifz
                         </div>
                         <div>
-                          <h4 className="font-display font-extrabold text-[#D8BB72] text-xs">Native Arab Teachers</h4>
+                          <h4 className="font-display font-extrabold text-[#D8BB72] text-xs">Certified Quran Teachers</h4>
                           <p className="text-[10px] text-gray-300 mt-1 leading-none">Complete personalized Tajweed alignment</p>
                         </div>
                       </div>
