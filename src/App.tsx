@@ -196,7 +196,7 @@ export default function App() {
 
             {/* Primary Lead Generation Enrollment Form */}
             <InquiryForm
-              prefilledCourse={selectedCourseSelection}
+              prefilledCourse={selectedCourseSelection && selectedCourseSelection.toLowerCase().includes('plan') ? '' : selectedCourseSelection}
               onClearPrefill={() => setSelectedCourseSelection('')}
             />
 
@@ -243,7 +243,10 @@ export default function App() {
               </p>
 
               <button
-                onClick={() => setIsTrialModalOpen(false)}
+                onClick={() => {
+                  setIsTrialModalOpen(false);
+                  setSelectedCourseSelection('');
+                }}
                 className="absolute top-4 right-4 text-emerald-custom-100 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="Close scheduling modal"
               >
@@ -261,6 +264,7 @@ export default function App() {
                   // Wait briefly and close modal automatically on success
                   setTimeout(() => {
                     setIsTrialModalOpen(false);
+                    setSelectedCourseSelection('');
                   }, 4000);
                 }}
               />
