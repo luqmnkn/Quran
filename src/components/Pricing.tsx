@@ -42,14 +42,14 @@ export default function Pricing({ onBookTrial }: PricingProps) {
     {
       id: 2,
       name: 'Plan 2',
-      price: 38,
-      oldPrice: 48,
+      price: 53,
+      oldPrice: 63,
       popular: false,
       features: [
         'Free Trial Class',
-        '2 Days per Week',
+        '3 Days per Week',
         '30 Minutes / Class',
-        '08 Classes / Month'
+        '12 Classes / Month'
       ]
     },
     {
