@@ -51,7 +51,7 @@ export default function Header({ onOpenTrialModal, currentPage, activeSection, o
         </a>
 
         {/* Minimal Links on the right of the logo */}
-        <nav className="flex items-center space-x-2.5 sm:space-x-6">
+        <nav className="flex items-center space-x-3 sm:space-x-6">
           {navLinks.map((link) => {
             const isActive = activeSection === link.activeKey;
             return (
@@ -59,7 +59,7 @@ export default function Header({ onOpenTrialModal, currentPage, activeSection, o
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleLinkClick(e, link.page, link.href)}
-                className={`font-display uppercase text-[9.5px] sm:text-xs tracking-wider sm:tracking-widest transition-all duration-300 relative py-1.5 ${
+                className={`font-display uppercase text-[11px] xs:text-[11.5px] sm:text-xs tracking-wider sm:tracking-widest transition-all duration-300 relative py-2 px-1 sm:px-0 ${
                   isActive
                     ? 'text-[#010804] font-[900] pointer-events-none'
                     : 'text-[#4E625A] hover:text-[#C8A24A] font-[600]'
