@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, Clock, MessageSquare, ArrowUpRight } from 'lucide-react';
+import { Phone, Mail, Clock, MessageSquare, ArrowUpRight, Instagram, Linkedin } from 'lucide-react';
 import Logo from './Logo';
 
 interface FooterProps {
@@ -60,6 +60,27 @@ export default function Footer({ currentPage = 'home', onNavigate }: FooterProps
             <p className="text-xs text-emerald-custom-100/70 leading-relaxed max-w-sm">
               An international online Quran academy providing personalized 1-on-1 certified live instruction for children and adults. Helping families master Tajweed and Quran memorization at home.
             </p>
+
+            <div className="flex items-center space-x-3 pt-2">
+              <a
+                href="https://www.instagram.com/quran_rise?igsh=MW9rMTVrcmcybWw0aA=="
+                target="_blank"
+                rel="noreferrer"
+                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-custom-100 hover:text-gold-accent-400 flex items-center justify-center transition-all border border-white/5 hover:border-gold-accent-500/30"
+                aria-label="Instagram"
+              >
+                <Instagram size={15} />
+              </a>
+              <a
+                href="https://www.linkedin.com/company/quran-rise/"
+                target="_blank"
+                rel="noreferrer"
+                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-custom-100 hover:text-gold-accent-400 flex items-center justify-center transition-all border border-white/5 hover:border-gold-accent-500/30"
+                aria-label="LinkedIn"
+              >
+                <Linkedin size={15} />
+              </a>
+            </div>
           </div>
 
           {/* Column 2: Quick Navigation */}

@@ -13,7 +13,9 @@ import {
   Phone,
   Clock
 } from 'lucide-react';
-import heroImgUrl from '../assets/images/quran_hero_1780674937200.png';
+import learningSessionImg from '../assets/images/learning_session_1780674957111.png';
+import desktopVideo from '../assets/images/public/desktopVideo.mp4';
+import heroBackgroundVideo from '../assets/images/public/heroBackgroundVideo.mp4';
 
 interface HeroProps {
   onSubmitInquiry: (data: { fullName: string; email: string; phone: string; country: string; courseInterest: string; message: string }) => void;
@@ -88,7 +90,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
     try {
      
      
-          const apiUrl = "https://script.google.com/macros/s/AKfycbyAFvOGLKmUhG6m2mHG-b7HxucwVJR7ojPGY0ZhJm8nH7PYRmB1-5tR_Vp1LJnJ0lOR/exec"
+          const apiUrl = "https://script.google.com/macros/s/AKfycbyrGtNw064-fPr60LqWD_YH4aAWB5YLqpcxMX62tbEgEnr_29IhJlEGVnXyHQuX83O6/exec"
       
       
       if (apiUrl) {
@@ -173,9 +175,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
             playsInline
             className="w-full h-full object-cover opacity-70"
           >
-            <source src="https://videos.pexels.com/video-files/9117001/9117001-sd_640_360_24fps.mp4" type="video/mp4" />
-            <source src="https://videos.pexels.com/video-files/9117001/9117001-sd_960_506_24fps.mp4" type="video/mp4" />
-            <source src="https://videos.pexels.com/video-files/9117001/9117001-uhd_1440_2560_24fps.mp4" type="video/mp4" />
+            <source src={heroBackgroundVideo} type="video/mp4" />
           </video>
           {/* Left-to-right overlay for text legibility, top-to-bottom for subtle integration */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#05110E]/95 via-[#05110E]/70 to-[#05110E]/20"></div>
@@ -183,7 +183,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
         </div>
 
         <img
-          src={heroImgUrl}
+          src={learningSessionImg}
           alt="Quran study background"
           className="w-full h-full object-cover opacity-5 mix-blend-overlay filter blur-[1px]"
           referrerPolicy="no-referrer"
@@ -331,16 +331,15 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                   >
                     {/* Golden edge glowing lines */}
                     <div className="absolute inset-0 rounded-[34px] sm:rounded-[42px] border-2 border-transparent bg-gradient-to-r from-[#C8A24A] via-transparent to-[#D8BB72] opacity-35 pointer-events-none z-20"></div>
-                    
-                    {/* Shadow masking overlay */}
+                                       {/* Shadow masking overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent z-10 pointer-events-none rounded-[34px]"></div>
-
+                    
                     {/* Responsive video loader - ONLY loads one video based on device breakpoint */}
                     {isMobile ? (
                       <video
                         key="mobile-video"
                         ref={videoRef}
-                        src="/8488700-hd_1920_1080_25fps_1.mp4"
+                        src={desktopVideo}
                         autoPlay
                         loop
                         muted
@@ -351,7 +350,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                       <video
                         key="desktop-video"
                         ref={videoRef}
-                        src="/6671228-hd_1920_1080_25fps.mp4"
+                        src={desktopVideo}
                         autoPlay
                         loop
                         muted
@@ -360,22 +359,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                       />
                     )}
 
-                    {/* FLOATING CARD 1: Connection indicator */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="absolute top-6 left-6 z-20 bg-black/60 backdrop-blur-md rounded-2xl p-3 border border-white/10 flex items-center space-x-2.5 max-w-[200px] shadow"
-                    >
-                      <span className="flex h-2 w-2 shrink-0 relative">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-duration-1000"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
-                      </span>
-                      <div className="text-left font-mono">
-                        <h4 className="text-[9px] uppercase font-bold text-[#C8A24A] tracking-wider leading-none">Class Connection</h4>
-                        <p className="text-[11px] text-white font-extrabold mt-1 leading-none">1:1 Sheikh Refresher</p>
-                      </div>
-                    </motion.div>
+                  
 
                     {/* FLOATING BADGE 2: Availability */}
                     <motion.div 
@@ -385,7 +369,7 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                       className="absolute top-6 right-6 z-20 px-3 py-1.5 bg-[#C8A24A]/25 border border-[#C8A24A]/50 text-[#ECE5C1] text-[9px] font-bold uppercase tracking-widest rounded-xl backdrop-blur-sm shadow flex items-center space-x-1.5"
                     >
                       <Clock size={11} className="text-[#C8A24A]" />
-                      <span>24/7 Live Availability</span>
+                      <span>Live Availability</span>
                     </motion.div>
 
                     {/* FLOATING CARD 3: Comprehensive trust overlay */}
