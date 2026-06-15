@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, Clock, MessageSquare, ArrowUpRight, Instagram, Linkedin } from 'lucide-react';
+import { Phone, Mail, Clock, MessageSquare, ArrowUpRight, Instagram, Linkedin, Facebook } from 'lucide-react';
 import Logo from './Logo';
 
 interface FooterProps {
@@ -61,24 +61,33 @@ export default function Footer({ currentPage = 'home', onNavigate }: FooterProps
               An international online Quran academy providing personalized 1-on-1 certified live instruction for children and adults. Helping families master Tajweed and Quran memorization at home.
             </p>
 
-            <div className="flex items-center space-x-3 pt-2">
+            <div className="flex items-center space-x-3.5 pt-4">
+              <a
+                href="https://www.facebook.com/share/1AjoSTvuiw/?mibextid=wwXIfr"
+                target="_blank"
+                rel="noreferrer"
+                className="w-10 h-10 rounded-xl bg-white/[0.03] hover:bg-gradient-to-br hover:from-gold-accent-600 hover:to-gold-accent-400 text-emerald-custom-200 hover:text-[#0b1b17] flex items-center justify-center transition-all duration-300 border border-white/5 hover:border-gold-accent-400/50 shadow-md hover:shadow-[0_0_15px_rgba(200,162,74,0.35)] hover:-translate-y-1 transform group"
+                aria-label="Facebook"
+              >
+                <Facebook size={18} className="transition-transform duration-300 group-hover:scale-110" />
+              </a>
               <a
                 href="https://www.instagram.com/quran_rise?igsh=MW9rMTVrcmcybWw0aA=="
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-custom-100 hover:text-gold-accent-400 flex items-center justify-center transition-all border border-white/5 hover:border-gold-accent-500/30"
+                className="w-10 h-10 rounded-xl bg-white/[0.03] hover:bg-gradient-to-br hover:from-gold-accent-600 hover:to-gold-accent-400 text-emerald-custom-200 hover:text-[#0b1b17] flex items-center justify-center transition-all duration-300 border border-white/5 hover:border-gold-accent-400/50 shadow-md hover:shadow-[0_0_15px_rgba(200,162,74,0.35)] hover:-translate-y-1 transform group"
                 aria-label="Instagram"
               >
-                <Instagram size={15} />
+                <Instagram size={18} className="transition-transform duration-300 group-hover:scale-110" />
               </a>
               <a
                 href="https://www.linkedin.com/company/quran-rise/"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-custom-100 hover:text-gold-accent-400 flex items-center justify-center transition-all border border-white/5 hover:border-gold-accent-500/30"
+                className="w-10 h-10 rounded-xl bg-white/[0.03] hover:bg-gradient-to-br hover:from-gold-accent-600 hover:to-gold-accent-400 text-emerald-custom-200 hover:text-[#0b1b17] flex items-center justify-center transition-all duration-300 border border-white/5 hover:border-gold-accent-400/50 shadow-md hover:shadow-[0_0_15px_rgba(200,162,74,0.35)] hover:-translate-y-1 transform group"
                 aria-label="LinkedIn"
               >
-                <Linkedin size={15} />
+                <Linkedin size={18} className="transition-transform duration-300 group-hover:scale-110" />
               </a>
             </div>
           </div>
