@@ -167,6 +167,11 @@ export const WHY_CHOOSE_US = [
     title: 'Affordable & High Quality',
     description: 'No hidden registration fees or long commitments. Transparent, competitive packages structured to keep online Quran studies accessible to everyone.',
     icon: 'CheckCircle'
+  },
+  {
+    title: 'Personalized Study Plans',
+    description: 'We craft structured, customized learning pathways designed for individual student goals, ensuring comfort, optimal progress, and deep retention.',
+    icon: 'GraduationCap'
   }
 ];
 
@@ -198,8 +203,8 @@ export const FAQS = [
 ];
 
 export const TRUST_STATS: TrustStat[] = [
-  { value: '15+', label: 'Years Experience', description: 'Delivering exceptional Islamic and Qur’anic teaching to international students.' },
-  { value: '25,000+', label: 'Classes Completed', description: 'Successful live one-on-one sessions taught by our top-ranking certified tutors.' },
+  { value: '10+', label: 'Years Experience', description: 'Delivering exceptional Islamic and Qur’anic teaching to international students.' },
+  { value: '15,000+', label: 'Classes Completed', description: 'Successful live one-on-one sessions taught by our top-ranking certified tutors.' },
   { value: '98%', label: 'Student Satisfaction', description: 'Loved and recommended by international parents, children, and adult scholars.' },
   { value: '100%', label: 'Certified Educators', description: 'Instructors holding legitimate general degrees, Hifz certificates, and verified academic credentials.' }
 ];
