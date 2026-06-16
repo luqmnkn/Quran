@@ -16,6 +16,7 @@ import {
 import learningSessionImg from '../assets/images/learning_session_1780674957111.png';
 import desktopVideo from '../assets/images/public/desktopVideo.mp4';
 import heroBackgroundVideo from '../assets/images/public/heroBackgroundVideo.mp4';
+import { trackLeadSubmission } from '../utils/gtm';
 
 interface HeroProps {
   onSubmitInquiry: (data: { fullName: string; email: string; phone: string; country: string; courseInterest: string; message: string }) => void;
@@ -138,6 +139,15 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
         // Simulate network latency for a polished spinner effect
         await new Promise((resolve) => setTimeout(resolve, 800));
       }
+
+      // Track successful lead submission in Google Tag Manager
+      trackLeadSubmission({
+        name,
+        email,
+        phone: cleanAndFormatPhone(countryCode, phone),
+        course,
+        message: 'Quick lead generated from cinematic hero segment.'
+      });
 
       setSubmitted(true);
       setName('');

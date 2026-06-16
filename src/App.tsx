@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Pricing from './components/Pricing';
@@ -16,11 +17,31 @@ import Blogs from './components/Blogs';
 import { X, Calendar, User, ShieldCheck } from 'lucide-react';
 
 export default function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [isTrialModalOpen, setIsTrialModalOpen] = useState(false);
   const [selectedCourseSelection, setSelectedCourseSelection] = useState('');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentPage, setCurrentPage] = useState<'home' | 'pricing' | 'blogs'>('home');
   const [activeSection, setActiveSection] = useState<'home' | 'pricing' | 'courses' | 'blogs'>('home');
+
+  // Synchronize routing state with URL path
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/pricing') {
+      setCurrentPage('pricing');
+      setActiveSection('pricing');
+    } else if (path === '/blog' || path === '/blogs') {
+      setCurrentPage('blogs');
+      setActiveSection('blogs');
+    } else {
+      setCurrentPage('home');
+      if (activeSection === 'pricing' || activeSection === 'blogs') {
+        setActiveSection('home');
+      }
+    }
+  }, [location.pathname]);
 
   // Sync activeSection on page changes
   useEffect(() => {
@@ -59,17 +80,20 @@ export default function App() {
   const handleNavigation = (page: 'home' | 'pricing' | 'blogs', sectionId?: string) => {
     if (page === 'pricing') {
       setActiveSection('pricing');
+      navigate('/pricing');
     } else if (page === 'blogs') {
       setActiveSection('blogs');
-    } else if (sectionId === '#courses') {
-      setActiveSection('courses');
+      navigate('/blog');
     } else {
-      setActiveSection('home');
+      if (sectionId === '#courses') {
+        setActiveSection('courses');
+      } else {
+        setActiveSection('home');
+      }
+      navigate('/');
     }
 
     if (page !== currentPage) {
-      setCurrentPage(page);
-      
       // If switching page and a target anchor section is available
       if (page === 'home' && sectionId && sectionId !== '#home') {
         setTimeout(() => {
@@ -83,13 +107,13 @@ export default function App() {
               behavior: 'smooth'
             });
           }
-        }, 120);
+        }, 150);
       } else {
         window.scrollTo({ top: 0, behavior: 'instant' as any });
       }
     } else {
       // Already on requested page, scroll to specific section or smoothly to top
-      if (sectionId) {
+      if (sectionId && sectionId !== '/') {
         const target = document.querySelector(sectionId);
         if (target) {
           const headerOffset = 100;
@@ -114,7 +138,7 @@ export default function App() {
     
     // If on a different subpage, navigate back home first
     if (currentPage !== 'home') {
-      setCurrentPage('home');
+      navigate('/');
       setTimeout(() => {
         const targetElement = document.querySelector('#contact');
         if (targetElement) {
@@ -126,7 +150,7 @@ export default function App() {
             behavior: 'smooth'
           });
         }
-      }, 120);
+      }, 150);
     } else {
       const targetElement = document.querySelector('#contact');
       if (targetElement) {

@@ -21,15 +21,15 @@ export default function Header({ onOpenTrialModal, currentPage, activeSection, o
   }, []);
 
   const navLinks = [
-    { name: 'Home', page: 'home' as const, activeKey: 'home' as const, href: '#home' },
-    { name: 'Pricing', page: 'pricing' as const, activeKey: 'pricing' as const, href: '#pricing' },
+    { name: 'Home', page: 'home' as const, activeKey: 'home' as const, href: '/' },
+    { name: 'Pricing', page: 'pricing' as const, activeKey: 'pricing' as const, href: '/pricing' },
     { name: 'Courses', page: 'home' as const, activeKey: 'courses' as const, href: '#courses' },
-    { name: 'Blogs', page: 'blogs' as const, activeKey: 'blogs' as const, href: '#blogs' }
+    { name: 'Blogs', page: 'blogs' as const, activeKey: 'blogs' as const, href: '/blog' }
   ];
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, page: 'home' | 'pricing' | 'blogs', href: string) => {
     e.preventDefault();
-    onNavigate(page, href);
+    onNavigate(page, href === '/' ? '#home' : href);
   };
 
   return (
@@ -43,8 +43,8 @@ export default function Header({ onOpenTrialModal, currentPage, activeSection, o
       >
         {/* Logo permanently on the left side of the navbar */}
         <a
-          href="#home"
-          onClick={(e) => handleLinkClick(e, 'home', '#home')}
+          href="/"
+          onClick={(e) => handleLinkClick(e, 'home', '/')}
           className="flex items-center shrink-0 pr-1"
         >
           <Logo isDarkBg={false} className="h-4.5 xs:h-5 sm:h-7" />

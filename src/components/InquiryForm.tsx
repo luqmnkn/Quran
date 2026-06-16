@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { InquirySubmission } from '../types';
 import { Mail, Phone, Globe, MessageSquare, Check, AlertCircle, Trash2, Send, Clock, BookOpen, Sparkles, ShieldCheck } from 'lucide-react';
+import { trackLeadSubmission } from '../utils/gtm';
 
 interface InquiryFormProps {
   prefilledCourse: string;
@@ -134,6 +135,17 @@ export default function InquiryForm({ prefilledCourse, onClearPrefill, onSubmitS
         // Simulate network latency for a polished spinner effect
         await new Promise((resolve) => setTimeout(resolve, 800));
       }
+
+      // Track successful lead submission in Google Tag Manager
+      trackLeadSubmission({
+        fullName,
+        email,
+        phone: cleanAndFormatPhone(countryCode, phone),
+        country,
+        courseInterest,
+        message,
+        plan: prefilledCourse && prefilledCourse.toLowerCase().includes('plan') ? prefilledCourse : '',
+      });
 
       setStatus('success');
       setFullName('');

@@ -1,7 +1,66 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useInView } from 'motion/react';
 import { TRUST_STATS } from '../data';
 import { CheckCircle2, ShieldAlert, Award } from 'lucide-react';
+
+interface AnimatedCounterProps {
+  value: string;
+}
+
+function AnimatedCounter({ value }: AnimatedCounterProps) {
+  const cleanNumberStr = value.replace(/[^0-9]/g, '');
+  const target = parseInt(cleanNumberStr, 10) || 0;
+  const hasComma = value.includes(',');
+  const suffix = value.replace(/[0-9,]/g, '');
+
+  const [count, setCount] = useState(0);
+  const containerRef = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: '-50px 0px' });
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    const duration = 2000; // Counter takes 2 seconds to reach the goal
+    const startTime = performance.now();
+    let animationFrameId: number;
+
+    const updateValue = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Decelerate beautifully using easeOutExpo
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const currentCount = Math.floor(easeProgress * target);
+      
+      setCount(currentCount);
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(updateValue);
+      } else {
+        setCount(target);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(updateValue);
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [isInView, target]);
+
+  const formattedCount = hasComma 
+    ? count.toLocaleString('en-US') 
+    : count.toString();
+
+  return (
+    <span ref={containerRef} className="tabular-nums">
+      {formattedCount}
+      {suffix}
+    </span>
+  );
+}
 
 export default function TrustCredibility() {
   return (
@@ -42,7 +101,7 @@ export default function TrustCredibility() {
             >
               <div className="space-y-1.5 sm:space-y-3">
                 <span className="font-display font-[900] text-xl xs:text-2xl sm:text-4xl lg:text-5xl text-transparent bg-clip-text bg-gradient-to-br from-[#D8BB72] to-[#8A6B20] block tracking-tighter">
-                  {stat.value}
+                  <AnimatedCounter value={stat.value} />
                 </span>
                 <h4 className="font-display font-extrabold text-[10px] xs:text-xs sm:text-sm text-white tracking-tight leading-snug">
                   {stat.label}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, Clock, MessageSquare, ArrowUpRight, Instagram, Linkedin, Facebook } from 'lucide-react';
+import { Phone, Mail, Clock, MessageSquare, ArrowUpRight, Instagram, Linkedin, Facebook, Youtube } from 'lucide-react';
 import Logo from './Logo';
 
 interface FooterProps {
@@ -50,7 +50,7 @@ export default function Footer({ currentPage = 'home', onNavigate }: FooterProps
           {/* Column 1: Brand Info */}
           <div className="md:col-span-4 space-y-4">
             <a
-              href="#home"
+              href="/"
               onClick={(e) => handleLinkClick(e, '#home')}
               className="flex items-center group"
             >
@@ -81,6 +81,15 @@ export default function Footer({ currentPage = 'home', onNavigate }: FooterProps
                 <Instagram size={18} className="transition-transform duration-300 group-hover:scale-110" />
               </a>
               <a
+                href="https://youtube.com/@mribrahimyt-p2q?si=t-bvlzKekK4CGA-p"
+                target="_blank"
+                rel="noreferrer"
+                className="w-10 h-10 rounded-xl bg-white/[0.03] hover:bg-gradient-to-br hover:from-gold-accent-600 hover:to-gold-accent-400 text-emerald-custom-200 hover:text-[#0b1b17] flex items-center justify-center transition-all duration-300 border border-white/5 hover:border-gold-accent-400/50 shadow-md hover:shadow-[0_0_15px_rgba(200,162,74,0.35)] hover:-translate-y-1 transform group"
+                aria-label="YouTube"
+              >
+                <Youtube size={18} className="transition-transform duration-300 group-hover:scale-110" />
+              </a>
+              <a
                 href="https://www.linkedin.com/company/quran-rise/"
                 target="_blank"
                 rel="noreferrer"
@@ -99,7 +108,7 @@ export default function Footer({ currentPage = 'home', onNavigate }: FooterProps
             </h4>
             <ul className="space-y-2.5 text-xs text-emerald-custom-100/75 font-medium">
               <li>
-                <a href="#home" onClick={(e) => handleLinkClick(e, '#home')} className="hover:text-white hover:underline transition-colors">Home</a>
+                <a href="/" onClick={(e) => handleLinkClick(e, '#home')} className="hover:text-white hover:underline transition-colors">Home</a>
               </li>
               <li>
                 <a href="#about" onClick={(e) => handleLinkClick(e, '#about')} className="hover:text-white hover:underline transition-colors">About Us</a>
@@ -108,10 +117,10 @@ export default function Footer({ currentPage = 'home', onNavigate }: FooterProps
                 <a href="#courses" onClick={(e) => handleLinkClick(e, '#courses')} className="hover:text-white hover:underline transition-colors">Programs</a>
               </li>
               <li>
-                <a href="#pricing" onClick={(e) => handleLinkClick(e, '#pricing')} className="hover:text-white hover:underline transition-colors">Pricing Plans</a>
+                <a href="/pricing" onClick={(e) => handleLinkClick(e, '#pricing')} className="hover:text-white hover:underline transition-colors">Pricing Plans</a>
               </li>
               <li>
-                <a href="#blogs" onClick={(e) => handleLinkClick(e, '#blogs')} className="hover:text-white hover:underline transition-colors">Quranic Blogs</a>
+                <a href="/blog" onClick={(e) => handleLinkClick(e, '#blogs')} className="hover:text-white hover:underline transition-colors">Quranic Blogs</a>
               </li>
               <li>
                 <a href="#why-us" onClick={(e) => handleLinkClick(e, '#why-us')} className="hover:text-white hover:underline transition-colors">Why Learn Here</a>
