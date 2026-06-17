@@ -26,6 +26,26 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'pricing' | 'blogs'>('home');
   const [activeSection, setActiveSection] = useState<'home' | 'pricing' | 'courses' | 'blogs'>('home');
 
+  // If the site URL/hostname starts with "quranrise" and the path
+  // is not a blog or pricing page, force-show the homepage.
+  useEffect(() => {
+    try {
+      const host = window.location.hostname.toLowerCase();
+      const href = window.location.href.toLowerCase();
+      const path = location.pathname.toLowerCase();
+      const startsWithQuranrise = host.startsWith('quranrise') || href.startsWith('https://quranrise') || href.startsWith('http://quranrise');
+      if (startsWithQuranrise && path !== '/pricing' && path !== '/blog' && path !== '/blogs') {
+        if (location.pathname !== '/') {
+          navigate('/', { replace: true });
+        }
+        setCurrentPage('home');
+        setActiveSection('home');
+      }
+    } catch (e) {
+      // silent
+    }
+  }, [location.pathname]);
+
   // Synchronize routing state with URL path
   useEffect(() => {
     const path = location.pathname;

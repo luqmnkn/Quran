@@ -24,7 +24,7 @@ export default function WhatsAppButton() {
     <div className="fixed bottom-24 md:bottom-6 right-6 z-40 flex items-center group">
       {/* Main floating button */}
       <a
-        href="https://wa.me/18186509752?text=Assalamu%20alaikum%20QuranRise.com%21%20I%20want%20to%20learn%20Quran%20Online%20and%20I%20need%20more%20info%20https%3A%2F%2Fquranrise.com."
+        href="https://wa.me/18186509752?text=Assalamu%20alaikum%20*quranrise.com*!%20I%20want%20to%20learn%20Quran%20Online%20and%20I%20need%20more%20info%0Ahttps%3A%2F%2Fquranrise.com"
         target="_blank"
         rel="noreferrer"
         className="w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center shadow-lg hover:shadow-green-500/20 hover:scale-110 active:scale-95 transition-all duration-300 relative"
