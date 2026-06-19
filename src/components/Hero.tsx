@@ -17,6 +17,7 @@ import learningSessionImg from '../assets/images/learning_session_1780674957111.
 import desktopVideo from '../assets/images/public/desktopVideo.mp4';
 import heroBackgroundVideo from '../assets/images/public/heroBackgroundVideo.mp4';
 import { trackLeadSubmission } from '../utils/gtm';
+import { ALL_COUNTRIES } from '../utils/countries';
 
 interface HeroProps {
   onSubmitInquiry: (data: { fullName: string; email: string; phone: string; country: string; courseInterest: string; message: string }) => void;
@@ -101,12 +102,15 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
         
         const formattedPhone = cleanAndFormatPhone(countryCode, phone);
 
+        const matchedCountry = ALL_COUNTRIES.find(c => c.dial === countryCode);
+        const resolvedCountryName = matchedCountry ? matchedCountry.name : 'United States';
+
         // Prepare data package using URL-encoded search formats instead of stringified JSON objects
         const formPayload = new URLSearchParams();
         formPayload.append('fullName', name);
         formPayload.append('email', email);
         formPayload.append('phone', formattedPhone);
-        formPayload.append('country', 'Quick Trial Request');
+        formPayload.append('country', resolvedCountryName);
         formPayload.append('courseInterest', course);
         formPayload.append('message', 'Quick lead generated from cinematic hero segment.');
         formPayload.append('website', website);
@@ -513,17 +517,13 @@ export default function Hero({ onSubmitInquiry, onOpenTrialModal }: HeroProps) {
                                 value={countryCode}
                                 disabled={submitting}
                                 onChange={(e) => setCountryCode(e.target.value)}
-                                className="bg-[#05110E] text-xs text-white/80 py-2.5 pl-2.5 pr-0.5 outline-none border-0 border-r border-white/10 cursor-pointer min-w-[70px]"
+                                className="bg-[#05110E] text-xs text-white/80 py-2.5 pl-2 pr-0.5 outline-none border-0 border-r border-white/10 cursor-pointer min-w-[85px] max-w-[125px]"
                               >
-                                <option value="+1" className="bg-[#05110E]">🇺🇸 +1</option>
-                                <option value="+44" className="bg-[#05110E]">🇬🇧 +44</option>
-                                <option value="+61" className="bg-[#05110E]">🇦🇺 +61</option>
-                                <option value="+966" className="bg-[#05110E]">🇸🇦 +966</option>
-                                <option value="+971" className="bg-[#05110E]">🇦🇪 +971</option>
-                                <option value="+974" className="bg-[#05110E]">🇶🇦 +974</option>
-                                <option value="+92" className="bg-[#05110E]">🇵🇰 +92</option>
-                                <option value="+91" className="bg-[#05110E]">🇮🇳 +91</option>
-                                <option value="" className="bg-[#05110E]">Other</option>
+                                {ALL_COUNTRIES.map((c) => (
+                                  <option key={`${c.code}-hero`} value={c.dial} className="bg-[#05110E]">
+                                    {c.flag} {c.dial}
+                                  </option>
+                                ))}
                               </select>
                               <input
                                 type="tel"
