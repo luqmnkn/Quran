@@ -265,11 +265,7 @@ export default function Pricing({ onBookTrial }: PricingProps) {
                 <div className="space-y-6">
                   {/* Plan Name & Tag */}
                   <div className="text-left space-y-1">
-                    <span className={`text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded ${
-                      plan.popular ? 'bg-white/10 text-[#D8BB72]' : 'bg-[#F5EDD6] text-[#8A6B20]'
-                    }`}>
-                      Elite Syllabus
-                    </span>
+
                     <h3 className="font-display font-[900] text-xl mt-2 leading-none">
                       {plan.name}
                     </h3>
